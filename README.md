@@ -1,7 +1,7 @@
 <h1 align="center">FastV</h1>
 <p align="center">
 
-*An Image is Worth 1/2 Tokens After Layer 2: Plug-and-PLay Acceleration for LVLM Inference*
+*Code for paper: An Image is Worth 1/2 Tokens After Layer 2: Plug-and-Play Acceleration for LVLM Inference*
 
 - [ ] LVLM Attention Visualization Code
 - [ ] FastV demo inference code
