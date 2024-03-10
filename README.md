@@ -5,7 +5,7 @@
 
 - [ ] LVLM Attention Visualization Code
 - [ ] FastV demo inference code
-- [ ] Intergrate FastV to vLLM framework
+- [ ] Intergrate FastV to LLM inference framework
 
 Stay tuned!
 
