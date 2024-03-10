@@ -3,7 +3,7 @@
 
 *Code for paper: An Image is Worth 1/2 Tokens After Layer 2: Plug-and-Play Acceleration for LVLM Inference*
 
-- [ ] LVLM Attention Visualization Code
+- [ ] LVLM Inefficent Visual Attention Visualization Code
 - [ ] FastV demo inference code
 - [ ] Intergrate FastV to LLM inference framework
 
