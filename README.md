@@ -1,8 +1,5 @@
 <h1 align="center">FastV</h1>
 
-
-
-
 - [ ] LVLM Inefficent Visual Attention Visualization Code
 - [ ] FastV demo inference code
 - [ ] Intergrate FastV to LLM inference framework
