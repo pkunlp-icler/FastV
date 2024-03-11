@@ -2,7 +2,7 @@
 
 
 
-*FastV is a plug-and-play inference acceleration method for large vision language models such as LLaVA. It could reach 45\% theoretical FLOPs reduction without harming the performance through pruning redundant image tokens in deep layers.*
+*FastV is a plug-and-play inference acceleration method for large vision language models relying on visual tokens. It could reach 45\% theoretical FLOPs reduction without harming the performance through pruning redundant visual tokens in deep layers.*
 
 <div align=center>
 <img width="500" src="./figs/fastv_tradeoff.png"/>
