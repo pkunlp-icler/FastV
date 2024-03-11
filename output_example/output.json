@@ -1,0 +1,7 @@
+{
+    "prompt": "Describe the image in details.",
+    "image": "./src/LLaVA/images/llava_logo.png",
+    "output": [
+        "The image features a unique and eye-catching toy, resembling a red and orange fire-breathing lion or a flaming horse. The toy is wearing glasses, giving it a quirky and playful appearance. It is standing on a gray surface, which serves as a backdrop for the toy. The combination of the vibrant colors and the glasses make this toy stand out and appear as a fun and imaginative plaything."
+    ]
+}
