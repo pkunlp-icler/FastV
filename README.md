@@ -15,7 +15,7 @@
 *Latest News 🔥*
 
 - [x] LVLM Inefficent Visual Attention Visualization Code
-- [x] FastV demo inference code
+- [ ] FastV demo inference code
 - [ ] Integrate FastV to LLM inference framework
 
 Stay tuned!
@@ -23,6 +23,7 @@ Stay tuned!
 ## Setup
 ```bash
 conda create -n fastv python=3.10
+conda activate fastv
 cd src
 bash setup.sh
 ```
