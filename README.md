@@ -16,7 +16,7 @@
 
 - [x] LVLM Inefficent Visual Attention Visualization Code
 - [ ] FastV demo inference code
-- [ ] Intergrate FastV to LLM inference framework
+- [ ] Integrate FastV to LLM inference framework
 
 Stay tuned!
 
