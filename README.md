@@ -53,7 +53,7 @@ Model output and attention maps for different layers would be stored at "./outpu
 
 ## FastV demo inference code
 
-We provide code to reproduce the ablation study on K and R values, as shown in figure-7 in the paper. This implementation mask out the discarded tokens in deep layers for convenience. Inplace token dropping feature would be added in LLM inference framework section.
+We provide code to reproduce the ablation study on K and R values, as shown in figure-7 in the paper. This implementation masks out the discarded tokens in deep layers for convenience. Inplace token dropping feature would be added in LLM inference framework section.
 
 *ocrvqa*
 ```bash
