@@ -23,6 +23,7 @@ Stay tuned!
 ## Setup
 ```bash
 conda create -n fastv python=3.10
+conda activate fastv
 cd src
 bash setup.sh
 ```
