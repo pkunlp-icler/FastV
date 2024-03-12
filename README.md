@@ -16,7 +16,7 @@
 
 - [x] LVLM Inefficent Visual Attention Visualization Code
 - [x] FastV demo inference code
-- [ ] Graido visualization demo
+- [ ] Gradio visualization demo
 - [ ] Integrate FastV to LLM inference framework
 
 Stay tuned!
