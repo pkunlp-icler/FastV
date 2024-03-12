@@ -15,8 +15,8 @@
 *Latest News 🔥*
 
 - [x] LVLM Inefficent Visual Attention Visualization Code
-- [ ] FastV demo inference code
-- [ ] Intergrate FastV to LLM inference framework
+- [x] FastV demo inference code
+- [ ] Integrate FastV to LLM inference framework
 
 Stay tuned!
 
@@ -44,6 +44,13 @@ python ./src/FastV/inference/plot_inefficient_attention.py \
 ```
 
 Model output and attention maps for different layers would be stored at "./output_example"
+
+<div align=center>
+<img width="600" src="./figs/attn_map.png"/>
+</div>
+
+## FastV demo inference code
+
 
 ## Citation
 ```bib
