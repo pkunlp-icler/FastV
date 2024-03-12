@@ -12,7 +12,7 @@
 </div>
 
 ---
-*Latest News 🔥*
+*Scheduled Updates🔥*
 
 - [x] LVLM Inefficent Visual Attention Visualization Code
 - [x] FastV demo inference code
