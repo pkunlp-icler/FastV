@@ -15,7 +15,8 @@
 *Latest News 🔥*
 
 - [x] LVLM Inefficent Visual Attention Visualization Code
-- [ ] FastV demo inference code
+- [x] FastV demo inference code
+- [ ] Graido visualization demo
 - [ ] Integrate FastV to LLM inference framework
 
 Stay tuned!
@@ -51,6 +52,18 @@ Model output and attention maps for different layers would be stored at "./outpu
 </div>
 
 ## FastV demo inference code
+
+We provide code to reproduce the ablation study on K and R values, as shown in figure-7 in the paper. This implementation mask out the discarded tokens in deep layers for convenience. Inplace token dropping feature would be added in LLM inference framework section.
+
+*ocrvqa*
+```bash
+bash ./src/FastV/inference/eval/eval_ocrvqa.sh
+```
+
+<div align=center>
+<img width="300" src="./figs/ablation_ocrvqa.png"/><br>
+Results 
+</div>
 
 
 ## Citation

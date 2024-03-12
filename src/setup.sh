@@ -3,6 +3,6 @@ pip install -e .
 cd ../transformers
 pip install -e .
 
-pip install datasets seaborn
+pip install datasets seaborn pycocoevalcap
 
 
