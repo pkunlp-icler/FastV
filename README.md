@@ -74,15 +74,17 @@ We provide code to reproduce the ablation study on K and R values, as shown in f
 bash ./src/FastV/inference/eval/eval_ocrvqa.sh
 ```
 
+<div align=center>
+<img width="300" src="./figs/ablation_ocrvqa.png"/><br>
+Results 
+</div>
+
+
 ## 4. Integrate FastV to LLM inference framework
 
 *Stay Tuned! Welcome discussion and contribution!*
 
 
-<div align=center>
-<img width="300" src="./figs/ablation_ocrvqa.png"/><br>
-Results 
-</div>
 
 
 ## Citation
