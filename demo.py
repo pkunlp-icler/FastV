@@ -73,20 +73,20 @@ def visualize_attention(multihead_attention,title="Layer 5",sample_style="All la
     # label ticks
     for label in ax.get_xticklabels():
         tick_location = int(label.get_text())
-        if 0 <= tick_location <= 20:
+        if 0 <= tick_location <= 40:
             # set the color of the tick labels
             label.set_color('blue')
             label.set_fontweight('bold')
-        elif 20 < tick_location <= 576:
+        elif 40 < tick_location <= 600:
             label.set_color('red')
 
     for label in ax.get_yticklabels():
         tick_location = int(label.get_text())
-        if 0 <= tick_location <= 32:
+        if 0 <= tick_location <= 40:
             # set the color of the tick labels
             label.set_color('blue')
             label.set_fontweight('bold')
-        if 32 < tick_location <= 600:
+        elif 40 < tick_location <= 600:
             label.set_color('red')
 
 
@@ -320,29 +320,23 @@ if __name__ == '__main__':
     description= f'''# FastV Demo
 Welcome to the demonstration for [FastV](https://arxiv.org/abs/2403.06764), an innovative plug-and-play inference accelerator specifically designed for Large Vision-Language Models. 
 
-FastV utilizes visual tokens to boost the performance of large vision language models, enabling a **45% reduction in theoretical FLOPs** without compromising on performance. This is achieved by pruning redundant visual tokens in deep layers.
+FastV enables a **45% reduction in theoretical FLOPs** without compromising on performance by pruning redundant visual tokens in deep layers.
 
 <center><img src="data:image/png;base64,{fastv_tradeoff}" alt="FastV tradeoff image" style="width: 40%;"/></center>
 
-This demo unveils the attention maps of the llava-1.5-7B model, given an image and prompt, to illustrate the inefficient attention phenomena prevalent in Large Vision-Language Models (LVLMs).
-
-In the attention maps, the color intensity represents the attention weight, with darker colors indicating higher attention. The attention maps are visualized for each layer of the model.
+This demo unveils the attention maps of the llava-1.5-7B model to illustrate the inefficient attention phenomena prevalent in Large Vision-Language Models (LVLMs).
 
 The **System Prompt tokens are highlighted in blue**, followed by **Image tokens marked in red**. The remaining tokens are the text tokens marked in black.
-
-The attention maps are visualized for sampled layers of the model, defaulting to all layers. The user can select the number of layers to visualize the attention maps.
 
 ## Guidelines:
 
 1. **Upload an image**, **enter a prompt** and **select the number of layers** to visualize the attention maps.
 
-2. The demo will generate a description of the image, the time cost for generateion, and the attention maps for each layer of the model will be displayed.
-
-3. The attention maps will illustrate the inefficient attention phenomena prevalent in Large Vision-Language Models (LVLMs).
+2. The model output with FastV, time cost, and the attention maps for the sampled layers will be displayed.
 
 * **Note**: Due to the Network constraints, the attention map generation may take up to 30 seconds.*
 
-# Dive in, explore and enjoy the enhanced capabilities of FastV! 
+# Dive in, explore and enjoy the capabilities of FastV! 
 
 For more details, visit the [FastV GitHub page](https://github.com/pkunlp-icler/FastV).
 
