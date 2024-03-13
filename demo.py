@@ -151,8 +151,8 @@ if __name__ == '__main__':
 
     examples = [
         ["figs/example.jpg", "Describe all the objects in the image."],
-        ["figs/example2.jpg","How many animals are there in the image?"],
-        ["figs/example3.jpg","What kind of animal is in the image?"],
+        ["figs/example2.jpg","Describe the image in detail."],
+        ["figs/example3.jpg","Describe the animal in image in detail."],
     ]
     
     class InferenceArgs:
