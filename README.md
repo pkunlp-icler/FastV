@@ -17,6 +17,7 @@
 ---
 *Scheduled Updates🔥*
 
+0. - [x] Setup
 1. - [x] Visualization [Online Demo](https://www.fastv.work/)
 2. - [x] LVLM Inefficent Visual Attention Visualization Code
 3. - [x] FastV Inference and Evaluation
