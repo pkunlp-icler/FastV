@@ -21,7 +21,7 @@
 1. - [x] Visualization [Online Demo](https://www.fastv.work/)
 2. - [x] LVLM Inefficent Visual Attention Visualization Code
 3. - [x] FastV Inference and Evaluation
-4. - [ ] Integrate FastV to LLM inference framework
+4. - [ ] Integrate FastV to LLM Inference Framework
 
 Stay tuned!
 
