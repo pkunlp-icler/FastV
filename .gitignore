@@ -13,8 +13,7 @@ dist/
 *.a
 *.dll
 *.dylib
-mmicl_demo/
-
+llava-v1.5-7b/
 # Hugging Face Checkpoints
 **/checkpoint*/
 saved_model/

@@ -26,7 +26,7 @@ from llava.constants import DEFAULT_IMAGE_PATCH_TOKEN, DEFAULT_IM_START_TOKEN, D
 def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, load_4bit=False, device_map="auto", device="cuda", **kwargs):
     kwargs = {"device_map": device_map, **kwargs}
 
-    if device != "cuda":
+    if "cuda" not in device :
         kwargs['device_map'] = {"": device}
 
     if load_8bit:

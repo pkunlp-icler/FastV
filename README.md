@@ -16,7 +16,7 @@
 
 - [x] LVLM Inefficent Visual Attention Visualization Code
 - [x] FastV demo inference code
-- [ ] Gradio visualization demo
+- [x] Gradio visualization demo
 - [ ] Integrate FastV to LLM inference framework
 
 Stay tuned!
@@ -27,6 +27,18 @@ conda create -n fastv python=3.10
 conda activate fastv
 cd src
 bash setup.sh
+```
+
+
+## Online Demo
+
+We provide an [online demo](https://www.fastv.work/) for the FastV model. You can upload an image, enter a prompt, and select the number of layers to get the generated response and visualize the attention maps.
+
+This demo unveils the attention maps of the llava-1.5-7B model, given an image and prompt, to illustrate the inefficient attention phenomena prevalent in Large Vision-Language Models (LVLMs).
+
+if you want to start your own demo, you can use the following script:
+```bash
+python demo.py --model-path ./llava-v1.5-7b
 ```
 
 ## Visualization: Inefficient Attention over Visual Tokens 

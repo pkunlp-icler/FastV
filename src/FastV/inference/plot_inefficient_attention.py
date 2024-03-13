@@ -100,9 +100,9 @@ def load_image(image_file):
 if __name__=="__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--model-path', type=str, required=True, default="/home/cl/models/llava-v1.5-13b")
-    parser.add_argument('--image-path', type=str, required=True, help='the path of the image')
-    parser.add_argument('--prompt', type=str, required=True, help='the question prompt')
+    parser.add_argument('--model-path', type=str, required=True, default="llava-v1.5-13b")
+    parser.add_argument('--image-path', type=str, required=True, help='figs/example.jpg')
+    parser.add_argument('--prompt', type=str, required=True, help='discribe the image in detail')
     parser.add_argument('--output-path', type=str, required=True, help='the path to save the output json file')
     pargs = parser.parse_args()
 
