@@ -3,6 +3,9 @@
 <p align="center">
 <a href="https://arxiv.org/abs/2403.06764">
 <img alt="Static Badge" src="https://img.shields.io/badge/FastV-ArXiv-red"></a>
+
+<a href="https://arxiv.org/abs/2403.06764](https://www.fastv.work/">
+<img alt="Static Badge" src="https://img.shields.io/badge/Demo-Gradio-yellow"></a>
 </p>
 
 *FastV is a plug-and-play inference acceleration method for large vision language models relying on visual tokens. It could reach 45\% theoretical FLOPs reduction without harming the performance through pruning redundant visual tokens in deep layers.*
@@ -14,14 +17,14 @@
 ---
 *Scheduled Updates🔥*
 
-- [x] LVLM Inefficent Visual Attention Visualization Code
-- [x] FastV demo inference code
-- [x] Gradio visualization [online demo](https://www.fastv.work/)
-- [ ] Integrate FastV to LLM inference framework
+1. - [x] Visualization [Online Demo](https://www.fastv.work/)
+2. - [x] LVLM Inefficent Visual Attention Visualization Code
+3. - [x] FastV Inference and Evaluation
+4. - [ ] Integrate FastV to LLM inference framework
 
 Stay tuned!
 
-## Setup
+## 0. Setup
 ```bash
 conda create -n fastv python=3.10
 conda activate fastv
@@ -30,18 +33,16 @@ bash setup.sh
 ```
 
 
-## Online Demo
+## 1. Online Demo
 
 We provide an [online demo](https://www.fastv.work/) for the FastV model. You can upload an image, enter a prompt, and select the number of layers to get the generated response and visualize the attention maps.
 
-This demo unveils the attention maps of the llava-1.5-7B model, given an image and prompt, to illustrate the inefficient attention phenomena prevalent in Large Vision-Language Models (LVLMs).
-
-if you want to start your own demo, you can use the following script:
+If you want to start your own demo, run the following script:
 ```bash
 python demo.py --model-path ./llava-v1.5-7b
 ```
 
-## Visualization: Inefficient Attention over Visual Tokens 
+## 2. Visualization: Inefficient Attention over Visual Tokens 
 
 we provide a script (./src/FastV/inference/visualization.sh) to reproduce the visualization result of each LLaVA model layer for a given image and prompt.
 
@@ -63,7 +64,7 @@ Model output and attention maps for different layers would be stored at "./outpu
 <img width="600" src="./figs/attn_map.png"/>
 </div>
 
-## FastV demo inference code
+## 3. FastV Inference and Evaluation
 
 We provide code to reproduce the ablation study on K and R values, as shown in figure-7 in the paper. This implementation masks out the discarded tokens in deep layers for convenience. Inplace token dropping feature would be added in LLM inference framework section.
 
@@ -71,6 +72,11 @@ We provide code to reproduce the ablation study on K and R values, as shown in f
 ```bash
 bash ./src/FastV/inference/eval/eval_ocrvqa.sh
 ```
+
+## 4. Integrate FastV to LLM inference framework
+
+*Stay Tuned! Welcome discussion and contribution!*
+
 
 <div align=center>
 <img width="300" src="./figs/ablation_ocrvqa.png"/><br>
