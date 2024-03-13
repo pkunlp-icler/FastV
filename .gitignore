@@ -17,7 +17,7 @@ llava-v1.5-7b/
 # Hugging Face Checkpoints
 **/checkpoint*/
 saved_model/
-
+gradio_temp/
 # Include files and directories typically present in the root of Python projects:
 /.idea
 /.vscode
