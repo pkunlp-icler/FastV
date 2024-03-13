@@ -4,7 +4,7 @@
 <a href="https://arxiv.org/abs/2403.06764">
 <img alt="Static Badge" src="https://img.shields.io/badge/FastV-ArXiv-red"></a>
 
-<a href="https://arxiv.org/abs/2403.06764](https://www.fastv.work/">
+<a href="https://www.fastv.work/">
 <img alt="Static Badge" src="https://img.shields.io/badge/Demo-Gradio-yellow"></a>
 </p>
 
