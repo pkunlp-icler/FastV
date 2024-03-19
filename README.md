@@ -68,7 +68,7 @@ Model output and attention maps for different layers would be stored at "./outpu
 
 ## FastV Inference and Evaluation
 
-We provide code to reproduce the ablation study on K and R values, as shown in figure-7 in the paper. This implementation masks out the discarded tokens in deep layers for convenience and fair performance comparison.
+We provide code to reproduce the ablation study on K and R values, as shown in figure-7 in the paper. This implementation masks out the discarded tokens (no speed up) in deep layers for convenience and fair performance comparison.
 
 *ocrvqa*
 ```bash
@@ -100,11 +100,11 @@ bash ./src/FastV/inference/eval/eval_aokvqa_latency_fastv_inplace.sh
 | 13B FastV (K=2 R=50%) | 81.3  | 0.155s                                  | 28G        |
 | 13B FastV (K=2 R=75%) | 80.9  | **0.124s**                                  | 27G        |
 
-This code implements the latency test of FastV using Inplace token dropping instead of token masking. It is not compatible with kv-cache yet, must be used with "use_cache=False".
+This code implements the latency test of FastV using Inplace Token dropping instead of token masking. It is not compatible with kv-cache yet, must be used with "use_cache=False" in the generate function.
 
 The main implementation of FastV is in the forward function of LlamaModel from [modeling_llama.py](https://github.com/pkunlp-icler/FastV/blob/36e71e90c6c8cd5f5de97eebfc2727a83b261327/src/transformers/src/transformers/models/llama/modeling_llama.py#L619) of transformers repo.
 
-### 5. Support KV Cache
+### Support KV Cache
 
 Stay tuned!
 
