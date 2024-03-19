@@ -231,7 +231,7 @@ if __name__=="__main__":
 
     
     # set model fastv config
-    if pargs.use_fast_v == "True":
+    if pargs.use_fast_v == True:
         model.config.use_fast_v = True
         model.config.fast_v_inplace = pargs.fast_v_inplace
         model.config.fast_v_sys_length = pargs.fast_v_sys_length
