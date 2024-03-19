@@ -21,7 +21,8 @@
 1. - [x] Visualization [Online Demo](https://www.fastv.work/)
 2. - [x] LVLM Inefficent Visual Attention Visualization Code
 3. - [x] FastV Inference and Evaluation
-4. - [ ] Integrate FastV to LLM Inference Framework
+4. - [x] Latency Test Reproduction
+5. - [ ] Support KV Cache
 
 Stay tuned!
 
@@ -71,7 +72,7 @@ We provide code to reproduce the ablation study on K and R values, as shown in f
 
 *ocrvqa*
 ```bash
-bash ./src/FastV/inference/eval/eval_ocrvqa.sh
+bash ./src/FastV/inference/eval/eval_ocrvqa_fastv_token_mask
 ```
 
 <div align=center>
@@ -80,11 +81,17 @@ Results
 </div>
 
 
-## 4. Integrate FastV to LLM inference framework
+## Integrate FastV to LLM inference framework
 
 
-### Latency Experiment Reproduction
-*aokvqa*
+### 4. Latency Experiment Reproduction
+You could use following code to reproduce FastV's latency experiment on aokvqa. We conduct the following experiments on single A100 (80G) 
+
+```bash
+bash ./src/FastV/inference/eval/eval_aokvqa_latency_fastv_inplace.sh
+```
+
+*aokvqa results*
 | Model                 | Score | latency / first output token (A100 80G) | GPU Memory |
 | --------------------- | ----- | --------------------------------------- | ---------- |
 | 7B Vanilla Decoding   | 76.8  | 0.138s                                  | 18G        |
@@ -93,9 +100,11 @@ Results
 | 13B FastV (K=2 R=50%) | 81.3  | 0.155s                                  | 28G        |
 | 13B FastV (K=2 R=75%) | 80.9  | **0.124s**                                  | 27G        |
 
-```bash
-bash ./src/FastV/inference/eval/eval_aokvqa_latency_fastv_inplace.sh
-```
+This code implements the latency test of FastV using Inplace token dropping instead of token masking. It is not compatible with support kv-cache yet, must be used with "use_cache=False".
+
+### 5. Support KV Cache
+
+Stay tuned!
 
 
 ## Citation
