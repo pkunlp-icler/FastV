@@ -85,7 +85,7 @@ Results
 
 
 ### Latency Experiment Reproduction
-You could use following code to reproduce FastV's latency experiment on aokvqa. We conduct the following experiments on single A100 (80G) 
+You could use following code to reproduce FastV's latency experiment on aokvqa. We conduct the following experiments on one A100 GPU (80G) 
 
 ```bash
 bash ./src/FastV/inference/eval/eval_aokvqa_latency_fastv_inplace.sh
