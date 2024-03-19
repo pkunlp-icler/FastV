@@ -164,14 +164,6 @@ valid_prompt = [TEMPLATE.format(question=question, options=format_choices(choice
 
 
 if __name__=="__main__":
-    # args parse
-
-    # self.fast_v_sys_length = fast_v_sys_length
-    # self.fast_v_image_token_length = fast_v_image_token_length
-    # self.fast_v_attention_rank = fast_v_attention_rank
-    # self.fast_v_agg_layer = fast_v_agg_layer
-    # self.use_fast_v = use_fast_v
-
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--model-path', type=str, required=True, default="/home/cl/models/llava-v1.5-13b")
@@ -279,32 +271,6 @@ if __name__=="__main__":
             keywords = [stop_str]
             stopping_criteria = KeywordsStoppingCriteria(keywords, tokenizer, input_ids)
 
-            # image_token_length = pargs.fast_v_image_token_length
-            # attention_mask_shape = (input_ids.shape[0], input_ids.shape[1] + image_token_length - 1)
-            # attention_mask = torch.ones(attention_mask_shape, dtype=torch.long, device=model.device)
-
-            # mask system prompt
-            # attention_mask[:, 18:36] = 0
-            # attention_mask[:, :18] = 0
-            # attention_mask[:, :4] = 0
-            # attention_mask[:, 0] = 0
-            # attention_mask[:, 12] = 0
-            # # mask image
-            # attention_mask[:, 36:36+image_token_length] = 0
-
-            # mask random half image
-            # attention_mask[:, 36:36+image_token_length] = torch.randint(0, 2, (1, image_token_length), device=model.device)
-            # mask random 3/4 image , 3/4 probability to mask to 0
-            # attention_mask[:, 36:36+image_token_length] = torch.randint(-2, 2, (1, image_token_length), device=model.device)
-            # attention_mask[attention_mask<0] = 0
-
-            #mask random 1/4 image , 3/4 probability to mask to 0
-            # attention_mask[:, 36:36+image_token_length] = torch.randint(0, 4, (1, image_token_length), device=model.device)
-            # attention_mask[attention_mask>0] = 1
-
-
-            #mask user input
-            # attention_mask[:, 36+image_token_length:] = 0
 
             with torch.inference_mode():
                 output_ids = model.generate(
@@ -349,8 +315,6 @@ if __name__=="__main__":
 
     # %%
     acc = compute_acc(oakvqa_val_inference_outputs,valid_anwser_options)
-
-    # output_path = "/home/cl/Cavilar/scripts/output_test/aokvqa/llava1.5_13b_aokvqa_streamingllm_acc.json"
 
     output_path = pargs.output_path
 
