@@ -1,6 +1,6 @@
 export CUDA_VISIBLE_DEVICES=0
 
-model_path=/cpfs01/user/cl424408/models/llava-v1.5-7b
+model_path=./models/llava-v1.5-7b
 output_path=ocrvqa_eval_fastv
 mkdir -p $output_path
 
