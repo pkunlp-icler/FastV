@@ -2191,6 +2191,7 @@ class GenerationMixin:
         else:
             return input_ids
 
+    # HACK
     def greedy_search(
         self,
         input_ids: torch.LongTensor,

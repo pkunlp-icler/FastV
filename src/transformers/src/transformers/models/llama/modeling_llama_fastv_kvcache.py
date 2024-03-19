@@ -184,6 +184,12 @@ def apply_rotary_pos_emb(q, k, cos, sin, position_ids):
     sin = sin.squeeze(1).squeeze(0)  # [seq_len, dim]
     cos = cos[position_ids].unsqueeze(1)  # [bs, 1, seq_len, dim]
     sin = sin[position_ids].unsqueeze(1)  # [bs, 1, seq_len, dim]
+
+    # print(q.shape,k.shape,cos.shape,sin.shape)
+    
+    temp_q = q*cos
+    # print(temp_q.shape)
+
     q_embed = (q * cos) + (rotate_half(q) * sin)
     k_embed = (k * cos) + (rotate_half(k) * sin)
     return q_embed, k_embed
@@ -287,6 +293,9 @@ class LlamaAttention(nn.Module):
     ) -> Tuple[torch.Tensor, Optional[torch.Tensor], Optional[Tuple[torch.Tensor]]]:
         bsz, q_len, _ = hidden_states.size()
 
+        # if past_key_value is not None:
+        #     print(past_key_value[0].shape,past_key_value[1].shape)
+
         if self.pretraining_tp > 1:
             key_value_slicing = (self.num_key_value_heads * self.head_dim) // self.pretraining_tp
             query_slices = self.q_proj.weight.split((self.num_heads * self.head_dim) // self.pretraining_tp, dim=0)
@@ -314,16 +323,21 @@ class LlamaAttention(nn.Module):
         kv_seq_len = key_states.shape[-2]
         if past_key_value is not None:
             kv_seq_len += past_key_value[0].shape[-2]
+        cos, sin = self.rotary_emb(value_states, seq_len=kv_seq_len)
+        # print(query_states.shape,key_states.shape,value_states.shape,cos.shape,sin.shape)
         
-        
-        cos, sin = self.rotary_emb(value_states, seq_len=1000)
+        # HACK Problem,solve dimension problem
+        # print(position_ids)
         query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin, position_ids)
+        
+        # print(key_states.shape,value_states.shape)
 
         if past_key_value is not None:
             # reuse k, v, self_attention
             key_states = torch.cat([past_key_value[0], key_states], dim=2)
             value_states = torch.cat([past_key_value[1], value_states], dim=2)
 
+        # print(key_states.shape,value_states.shape)
         past_key_value = (key_states, value_states) if use_cache else None
 
         # repeat k/v heads if n_kv_heads < n_heads
@@ -331,6 +345,9 @@ class LlamaAttention(nn.Module):
         value_states = repeat_kv(value_states, self.num_key_value_groups)
 
         attn_weights = torch.matmul(query_states, key_states.transpose(2, 3)) / math.sqrt(self.head_dim)
+
+        # print(key_states.shape,value_states.shape)
+        # print(attn_weights.size())
 
         if attn_weights.size() != (bsz, self.num_heads, q_len, kv_seq_len):
             raise ValueError(
@@ -577,7 +594,6 @@ class LlamaModel(LlamaPreTrainedModel):
         self.fast_v_image_token_length = config.fast_v_image_token_length
         self.fast_v_attention_rank = config.fast_v_attention_rank
         self.fast_v_agg_layer = config.fast_v_agg_layer
-        self.fast_v_inplace = config.fast_v_inplace
     
     def reset_fastv(self):
         self.use_fast_v = self.config.use_fast_v
@@ -585,7 +601,6 @@ class LlamaModel(LlamaPreTrainedModel):
         self.fast_v_image_token_length = self.config.fast_v_image_token_length
         self.fast_v_attention_rank = self.config.fast_v_attention_rank
         self.fast_v_agg_layer = self.config.fast_v_agg_layer
-        self.fast_v_inplace = self.config.fast_v_inplace
 
 
 
@@ -638,6 +653,9 @@ class LlamaModel(LlamaPreTrainedModel):
         )
         use_cache = use_cache if use_cache is not None else self.config.use_cache
 
+        # if past_key_values:
+        #     print(past_key_values[0][0].shape,attention_mask.shape)
+
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
 
         # retrieve input_ids and inputs_embeds
@@ -645,10 +663,13 @@ class LlamaModel(LlamaPreTrainedModel):
             raise ValueError("You cannot specify both decoder_input_ids and decoder_inputs_embeds at the same time")
         elif input_ids is not None:
             batch_size, seq_length = input_ids.shape
+            # print(input_ids)
         elif inputs_embeds is not None:
             batch_size, seq_length, _ = inputs_embeds.shape
         else:
             raise ValueError("You have to specify either decoder_input_ids or decoder_inputs_embeds")
+        
+
 
         seq_length_with_past = seq_length
         past_key_values_length = 0
@@ -669,13 +690,21 @@ class LlamaModel(LlamaPreTrainedModel):
         if inputs_embeds is None:
             inputs_embeds = self.embed_tokens(input_ids)
         # embed positions
-        if attention_mask is None:
-            attention_mask = torch.ones(
-                (batch_size, seq_length_with_past), dtype=torch.bool, device=inputs_embeds.device
-            )
+
+        
+
+        # if attention_mask is None: HACK
+
+        device = input_ids.device if input_ids is not None else inputs_embeds.device
+
+        attention_mask = torch.ones(
+            (batch_size, seq_length_with_past), dtype=torch.bool, device=device
+        )
         attention_mask = self._prepare_decoder_attention_mask(
             attention_mask, (batch_size, seq_length), inputs_embeds, past_key_values_length
         )
+
+        # print(attention_mask.shape,seq_length,past_key_values_length,seq_length_with_past)
 
         hidden_states = inputs_embeds
 
@@ -691,13 +720,19 @@ class LlamaModel(LlamaPreTrainedModel):
         all_self_attns = () if output_attentions else None
         next_decoder_cache = () if use_cache else None
 
-        device = input_ids.device if input_ids is not None else inputs_embeds.device
+        
 
         for idx, decoder_layer in enumerate(self.layers):
+
+            # print(idx)
+            
             if output_hidden_states:
                 all_hidden_states += (hidden_states,)
 
             past_key_value = past_key_values[idx] if past_key_values is not None else None
+            # if past_key_value:
+            #     print(idx,past_key_value[0].shape,past_key_value[1].shape)
+
             if self.gradient_checkpointing and self.training:
                 def create_custom_forward(module):
                     def custom_forward(*inputs):
@@ -719,17 +754,12 @@ class LlamaModel(LlamaPreTrainedModel):
                 IMAGE_TOKEN_LENGTH = self.fast_v_image_token_length
                 ATTENTION_RANK = self.fast_v_attention_rank
                 AGG_LAYER = self.fast_v_agg_layer
-                FASTV_INPLACE = self.fast_v_inplace
-                
-                if AGG_LAYER:
-                    assert AGG_LAYER > 0 , "K should be larger than 0"
+                USE_FAST_V_Token_Drop = True
 
                 
-
-                # FastV Token Rerank, Token Drop Implementation, KV-Cache not supported
-                if USE_FAST_V and FASTV_INPLACE:
-                    print("using inplace")
-
+                # Attention Rerank + Inplace KV Cache Selecting
+                if USE_FAST_V and USE_FAST_V_Token_Drop and past_key_value!=None:
+                    
                     if idx<AGG_LAYER:
                         new_attention_mask = attention_mask
 
@@ -745,23 +775,57 @@ class LlamaModel(LlamaPreTrainedModel):
                         # get the indexs of the top ATTENTION_RANK tokens
                         top_attention_rank_index = last_layer_attention_avg_last_tok_image.topk(ATTENTION_RANK).indices + SYS_LENGTH
                         # keep index
-                        keep_indexs = torch.cat( (torch.arange(SYS_LENGTH,device=device), top_attention_rank_index, torch.arange(SYS_LENGTH+IMAGE_TOKEN_LENGTH,seq_length_with_past,device=device)))
+                        keep_indexs = torch.cat( (torch.arange(SYS_LENGTH,device=device), top_attention_rank_index, torch.arange(SYS_LENGTH+IMAGE_TOKEN_LENGTH,past_key_value[0].shape[2],device=device)))
                         # sort index
                         keep_indexs = keep_indexs.sort().values
-                        # update seq length
-                        new_seq_length = keep_indexs.shape[0]
-                        # filter hidden states
-                        hidden_states = hidden_states[:,keep_indexs,:]
-                        # update position ids
-                        position_ids = keep_indexs.unsqueeze(0)
-                        # update attention mask
-                        new_attention_mask = self._prepare_decoder_attention_mask(
-                            None, (batch_size, new_seq_length), inputs_embeds, 0
+
+                        new_attention_mask = attention_mask
+
+                        # use top_attention_rank_index to compute
+                        new_past_key_value = (past_key_value[0][:,:,keep_indexs,:],past_key_value[1][:,:,keep_indexs,:])
+
+
+                        
+                        
+                    elif idx > AGG_LAYER:
+
+                        # import pdb
+                        # if idx==3:
+                        #     pdb.set_trace()
+
+                        past_key_value = new_past_key_value
+                        
+                        # new position id, todo
+
+                        # correct rope, todo
+
+                        new_seq_length_with_past = keep_indexs.shape[0]+1
+
+                        
+                        
+                        position_ids = torch.tensor([[keep_indexs.shape[0]]],device=device)
+                        # print(position_ids)
+                        
+                        new_attention_mask = torch.ones(
+                            (batch_size, new_seq_length_with_past), dtype=torch.bool, device=device
                         )
 
+                        new_attention_mask = self._prepare_decoder_attention_mask(
+                            new_attention_mask, (batch_size, seq_length), inputs_embeds, new_seq_length_with_past
+                        )
 
-                # FastV Token Rerank, Attention Mask Implementation
-                elif USE_FAST_V:
+                        
+
+                        
+
+
+
+                    
+
+
+
+                # Attention Rerank with attention mask
+                elif USE_FAST_V and not USE_FAST_V_Token_Drop:
                     if idx<AGG_LAYER:
                         new_attention_mask = torch.ones(
                             (batch_size, seq_length_with_past), dtype=torch.bool, device=inputs_embeds.device
@@ -802,15 +866,20 @@ class LlamaModel(LlamaPreTrainedModel):
                                 gen_attention_mask, (batch_size, seq_length), inputs_embeds, past_key_values_length
                             )
                             new_attention_mask = gen_attention_mask
-
-
                     else:
                         new_attention_mask = gen_attention_mask
                 
                 else: 
                     new_attention_mask = attention_mask
 
-                # print(idx,hidden_states.shape,new_attention_mask.shape,position_ids.shape)
+                # import pdb
+                # pdb.set_trace()
+
+                # K_CACHE = past_key_value[0], V_CACHE = past_key_value[1] # bsz,layers,n_tokens_
+                # if past_key_value:
+                #     print(idx,hidden_states.shape,new_attention_mask.shape,position_ids.shape,past_key_value[0].shape)
+                # else:
+                #     print(idx,hidden_states.shape,new_attention_mask.shape,position_ids.shape)
 
                 layer_outputs = decoder_layer(
                     hidden_states,

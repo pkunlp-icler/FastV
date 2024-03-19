@@ -21,13 +21,12 @@ from io import BytesIO
 from transformers import TextStreamer
 
 import os
-from datasets import load_from_disk,load_dataset
+from datasets import load_from_disk
 import torch
 import json
 from tqdm import tqdm
 
 import re	
-
 contractions = {"aint": "ain't", "arent": "aren't", "cant": "can't", "couldve": "could've", "couldnt": "couldn't", \
                         "couldn'tve": "couldn't've", "couldnt've": "couldn't've", "didnt": "didn't", "doesnt": "doesn't", "dont": "don't", "hadnt": "hadn't", \
                         "hadnt've": "hadn't've", "hadn'tve": "hadn't've", "hasnt": "hasn't", "havent": "haven't", "hed": "he'd", "hed've": "he'd've", \
@@ -127,34 +126,57 @@ def load_image(image_file):
 # %%
 # generate test aokvqa dataset
     
-# %%
-# generate test nocap dataset
 
-dataset_ocrvqa_images = []
-dataset_ocrvqa_prompts = []
-dataset_ocrvqa_labels = []
+# TEMPLATE = """
+# Analyse the image and choose the best answer for the following question:
+# {question}
+# Options: {options}
+# The best option is: """  #7b
 
-dataset = load_dataset("/cpfs01/shared/public/cl/datasets/OCR-VQA")['test']
 
-N_examples = 500 # samnple 500 examples for fast testing
-cur_num=0
+TEMPLATE = """
+Analyse the image and choose the best answer for the following question:
+{question}
+Options: {options}
+Just output the letter of the correct answer."""
 
-for i in dataset:
-    cur_num += 1
-    if cur_num > N_examples:
-        break
 
-    for question,answer in zip(i['questions'],i['answers']):
-        dataset_ocrvqa_images.append(i['image'])
-        dataset_ocrvqa_prompts.append(question)
-        dataset_ocrvqa_labels.append([answer])
+def format_choices(choices):
+    # example: ['Phoenix', 'Baton Rouge', 'Honolulu', 'Cheyenne'] -> "(A) Phoenix. (B) Baton Rouge. (C) Honolulu. (D) Cheyenne."
+    return " ".join([f"({chr(ord('A') + i)}) {choice}" for i, choice in enumerate(choices)])
+
+def format_anwser(choices,anwser_index):
+    # example: choices: ['Phoenix', 'Baton Rouge', 'Honolulu', 'Cheyenne'] , anwser_index:0 -> "(A) Phoenix"
+    return f"{chr(ord('A') + anwser_index)}"
+
+dataset = load_from_disk("/cpfs01/shared/public/cl/FastV-b/来自：快传/FastV/aokvqa/aokvqa")
+
+valid_images = dataset["validation"]["image"]
+valid_questions = dataset["validation"]["question"]
+valid_choices = dataset["validation"]["choices"]
+valid_anwser = dataset["validation"]["correct_choice_idx"]
+
+valid_anwser_options = [format_anwser(valid_choices[i],valid_anwser[i]) for i in range(len(valid_choices))]
+valid_prompt = [TEMPLATE.format(question=question, options=format_choices(choice)) for question, choice in zip(valid_questions, valid_choices)]
+
+
 
 
 
 if __name__=="__main__":
+    # args parse
+
+    # self.fast_v_sys_length = fast_v_sys_length
+    # self.fast_v_image_token_length = fast_v_image_token_length
+    # self.fast_v_attention_rank = fast_v_attention_rank
+    # self.fast_v_agg_layer = fast_v_agg_layer
+    # self.use_fast_v = use_fast_v
+
     parser = argparse.ArgumentParser()
+
     parser.add_argument('--model-path', type=str, required=True, default="/home/cl/models/llava-v1.5-13b")
-    parser.add_argument('--use-fast-v', type=str, required=True, help='whether to use fast-v')
+    parser.add_argument('--use-fast-v', default=False, action='store_true', help='whether to use fast-v')
+    parser.add_argument('--fast-v-inplace', default=False, action='store_true', help='whether to use fast-v inplace version to check real latency, no supported kv cache yet')
     parser.add_argument('--fast-v-sys-length', type=int, required=False, help='the length of system prompt')
     parser.add_argument('--fast-v-image-token-length', type=int, required=False, help='the length of image token')
     parser.add_argument('--fast-v-attention-rank', type=int, required=False, help='the rank of attention matrix')
@@ -163,6 +185,8 @@ if __name__=="__main__":
     parser.add_argument('--output-path', type=str, required=True, help='the path to save the output json file')
 
     pargs = parser.parse_args()
+
+    print(pargs)
 
         # %%
     class InferenceArgs:
@@ -177,6 +201,9 @@ if __name__=="__main__":
         load_4bit = False
         debug = False
         image_aspect_ratio = 'pad'
+        pca_prompt_data = ''
+        pca_img_dir = ''
+        output_path = ''
 
 
     # %%
@@ -206,6 +233,7 @@ if __name__=="__main__":
     # set model fastv config
     if pargs.use_fast_v == "True":
         model.config.use_fast_v = True
+        model.config.fast_v_inplace = pargs.fast_v_inplace
         model.config.fast_v_sys_length = pargs.fast_v_sys_length
         model.config.fast_v_image_token_length = pargs.fast_v_image_token_length
         model.config.fast_v_attention_rank = pargs.fast_v_attention_rank
@@ -251,14 +279,41 @@ if __name__=="__main__":
             keywords = [stop_str]
             stopping_criteria = KeywordsStoppingCriteria(keywords, tokenizer, input_ids)
 
+            # image_token_length = pargs.fast_v_image_token_length
+            # attention_mask_shape = (input_ids.shape[0], input_ids.shape[1] + image_token_length - 1)
+            # attention_mask = torch.ones(attention_mask_shape, dtype=torch.long, device=model.device)
+
+            # mask system prompt
+            # attention_mask[:, 18:36] = 0
+            # attention_mask[:, :18] = 0
+            # attention_mask[:, :4] = 0
+            # attention_mask[:, 0] = 0
+            # attention_mask[:, 12] = 0
+            # # mask image
+            # attention_mask[:, 36:36+image_token_length] = 0
+
+            # mask random half image
+            # attention_mask[:, 36:36+image_token_length] = torch.randint(0, 2, (1, image_token_length), device=model.device)
+            # mask random 3/4 image , 3/4 probability to mask to 0
+            # attention_mask[:, 36:36+image_token_length] = torch.randint(-2, 2, (1, image_token_length), device=model.device)
+            # attention_mask[attention_mask<0] = 0
+
+            #mask random 1/4 image , 3/4 probability to mask to 0
+            # attention_mask[:, 36:36+image_token_length] = torch.randint(0, 4, (1, image_token_length), device=model.device)
+            # attention_mask[attention_mask>0] = 1
+
+
+            #mask user input
+            # attention_mask[:, 36+image_token_length:] = 0
+
             with torch.inference_mode():
                 output_ids = model.generate(
                     input_ids,
                     images=image_tensor,
                     attention_mask=None,
                     do_sample=False,
-                    max_new_tokens=50,
-                    use_cache=True,
+                    max_new_tokens=1,
+                    use_cache=False,
                     stopping_criteria=[stopping_criteria],
                     output_attentions=True,
                     output_scores=True,
@@ -274,36 +329,26 @@ if __name__=="__main__":
         return outputs
     
 
-        # %%
-
     # %%
     # inference and compute cider scores
-    ocrvqa_inference_outputs = inference(dataset_ocrvqa_prompts,dataset_ocrvqa_images)
+    oakvqa_val_inference_outputs = inference(valid_prompt,valid_images)
 
 
 
     # %%
-    # compute cider scores
-    from pycocoevalcap.rouge.rouge import Rouge
-    def get_cider(labels,predictions):
-        scorer = Rouge()
-        # scorer += (hypo[0], ref1)
-        # make labels and predictions dict
-        labels_dict = {}
-        predictions_dict = {}
+    # compute acc
 
-        for i in range(len(labels)):
-            labels_dict[i] = [clean_text(t) for t in labels[i]]
-            predictions_dict[i] = [clean_text(predictions[i])]
-
-        (score, scores) = scorer.compute_score(labels_dict, predictions_dict)
-        return score,scores
-
+    def compute_acc(model_output,correct_anwser):
+        correct = 0
+        for i in range(len(model_output)):
+            if correct_anwser[i] in model_output[i]:
+                correct += 1
+        return correct/len(model_output)
     # %%
 
 
     # %%
-    score,scores = get_cider(dataset_ocrvqa_labels,ocrvqa_inference_outputs)
+    acc = compute_acc(oakvqa_val_inference_outputs,valid_anwser_options)
 
     # output_path = "/home/cl/Cavilar/scripts/output_test/aokvqa/llava1.5_13b_aokvqa_streamingllm_acc.json"
 
@@ -311,4 +356,4 @@ if __name__=="__main__":
 
     with open(output_path,"w") as f:
         # json dumps
-        json.dump({"avg":str(score),"scores":scores.tolist(),"output": ocrvqa_inference_outputs},f,indent=4)
+        json.dump({"acc":str(acc),"output": oakvqa_val_inference_outputs, "labels":valid_anwser_options},f,indent=4)

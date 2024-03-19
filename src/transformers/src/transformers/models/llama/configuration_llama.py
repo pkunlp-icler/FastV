@@ -127,6 +127,7 @@ class LlamaConfig(PretrainedConfig):
         fast_v_attention_rank = None,
         fast_v_agg_layer = None,
         use_fast_v = False,
+        fast_v_inplace = False,
         **kwargs,
     ):
         self.vocab_size = vocab_size
@@ -158,6 +159,7 @@ class LlamaConfig(PretrainedConfig):
         self.fast_v_attention_rank = fast_v_attention_rank
         self.fast_v_agg_layer = fast_v_agg_layer
         self.use_fast_v = use_fast_v
+        self.fast_v_inplace = fast_v_inplace
 
 
         super().__init__(
