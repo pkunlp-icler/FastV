@@ -728,7 +728,7 @@ class LlamaModel(LlamaPreTrainedModel):
 
                 # FastV Token Rerank, Token Drop Implementation, KV-Cache not supported
                 if USE_FAST_V and FASTV_INPLACE:
-                    print("using inplace")
+                    #print("using inplace")
 
                     if idx<AGG_LAYER:
                         new_attention_mask = attention_mask
