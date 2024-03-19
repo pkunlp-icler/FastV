@@ -149,7 +149,7 @@ def format_anwser(choices,anwser_index):
     # example: choices: ['Phoenix', 'Baton Rouge', 'Honolulu', 'Cheyenne'] , anwser_index:0 -> "(A) Phoenix"
     return f"{chr(ord('A') + anwser_index)}"
 
-dataset = load_from_disk("/cpfs01/shared/public/cl/FastV-b/来自：快传/FastV/aokvqa/aokvqa")
+dataset = load_from_disk("./data/aokvqa")
 
 valid_images = dataset["validation"]["image"]
 valid_questions = dataset["validation"]["question"]
