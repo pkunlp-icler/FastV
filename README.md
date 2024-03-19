@@ -26,7 +26,7 @@
 
 Stay tuned!
 
-## 0. Setup
+## Setup
 ```bash
 conda create -n fastv python=3.10
 conda activate fastv
@@ -35,7 +35,7 @@ bash setup.sh
 ```
 
 
-## 1. Online Demo
+## Online Demo
 
 We provide an [online demo](https://www.fastv.work/) for the FastV model. You can upload an image, enter a prompt, and select the number of layers to get the generated response and visualize the attention maps.
 
@@ -44,7 +44,7 @@ If you want to start your own demo, run the following script:
 python demo.py --model-path ./llava-v1.5-7b
 ```
 
-## 2. Visualization: Inefficient Attention over Visual Tokens 
+## Visualization: Inefficient Attention over Visual Tokens 
 
 we provide a script (./src/FastV/inference/visualization.sh) to reproduce the visualization result of each LLaVA model layer for a given image and prompt.
 
@@ -66,9 +66,9 @@ Model output and attention maps for different layers would be stored at "./outpu
 <img width="600" src="./figs/attn_map.png"/>
 </div>
 
-## 3. FastV Inference and Evaluation
+## FastV Inference and Evaluation
 
-We provide code to reproduce the ablation study on K and R values, as shown in figure-7 in the paper. This implementation masks out the discarded tokens in deep layers for convenience and fair performance comparison. 
+We provide code to reproduce the ablation study on K and R values, as shown in figure-7 in the paper. This implementation masks out the discarded tokens in deep layers for convenience and fair performance comparison.
 
 *ocrvqa*
 ```bash
@@ -84,7 +84,7 @@ Results
 ## Integrate FastV to LLM inference framework
 
 
-### 4. Latency Experiment Reproduction
+### Latency Experiment Reproduction
 You could use following code to reproduce FastV's latency experiment on aokvqa. We conduct the following experiments on single A100 (80G) 
 
 ```bash
@@ -101,6 +101,8 @@ bash ./src/FastV/inference/eval/eval_aokvqa_latency_fastv_inplace.sh
 | 13B FastV (K=2 R=75%) | 80.9  | **0.124s**                                  | 27G        |
 
 This code implements the latency test of FastV using Inplace token dropping instead of token masking. It is not compatible with support kv-cache yet, must be used with "use_cache=False".
+
+The main implementation of FastV is in the forward function of LlamaModel from [modeling_llama.py](https://github.com/pkunlp-icler/FastV/blob/36e71e90c6c8cd5f5de97eebfc2727a83b261327/src/transformers/src/transformers/models/llama/modeling_llama.py#L619) of transformers repo.
 
 ### 5. Support KV Cache
 
