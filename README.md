@@ -92,7 +92,7 @@ bash ./src/FastV/inference/eval/eval_aokvqa_latency_fastv_inplace.sh
 ```
 
 *aokvqa results*
-| Model                 | Score | latency / first output token (A100 80G) | GPU Memory |
+| Model                 | Score | latency / first output token (A100 80G) | Peak GPU Memory |
 | --------------------- | ----- | --------------------------------------- | ---------- |
 | LLaVA1.5-7B Vanilla Decoding   | 76.8  | 0.138s                                  | 18G        |
 | LLaVA1.5-13B Vanilla Decoding  | 81.9  | 0.203s                                  | 33G        |
