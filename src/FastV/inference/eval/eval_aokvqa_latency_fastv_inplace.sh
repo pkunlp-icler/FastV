@@ -1,7 +1,7 @@
 export CUDA_VISIBLE_DEVICES=0
 
-model_path=/cpfs01/user/cl424408/models/llava-v1.5-13b
-output_path=ocrvqa_eval_fastv
+model_path=./models/llava-v1.5-13b
+output_path=aokvqa_eval_fastv
 mkdir -p $output_path
 
 rank_list=(72 144 288 432) # rank equals to (1-R)*N_Image_Tokens, R=(87.5% 75% 50% 25%)
