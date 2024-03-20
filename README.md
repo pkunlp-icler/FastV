@@ -92,15 +92,19 @@ bash ./src/FastV/inference/eval/eval_aokvqa_latency_fastv_inplace.sh
 ```
 
 *aokvqa results*
-| Model                 | Score | latency / first output token (A100 80G) | Peak GPU Memory |
-| --------------------- | ----- | --------------------------------------- | ---------- |
-| LLaVA1.5-7B Vanilla Decoding   | 76.8  | 0.138s                                  | 18G        |
-| LLaVA1.5-13B Vanilla Decoding  | 81.9  | 0.203s                                  | 33G        |
-| LLaVA1.5-13B FastV (K=2 R=25%) | 81.8  | 0.181s                                  | 29G        |
-| LLaVA1.5-13B FastV (K=2 R=50%) | 81.3  | 0.155s                                  | 28G        |
-| LLaVA1.5-13B FastV (K=2 R=75%) | 80.9  | **0.124s**                                  | 27G        |
+| Model                         | Score | latency / first output token (A100 80G) | GPU Memory |
+| ----------------------------- | ----- | --------------------------------------- | ---------- |
+| 7B Vanilla Decoding           | 76.8  | 0.138s                                  | 18G        |
+| 13B Vanilla Decoding          | 81.9  | 0.203s                                  | 33G        |
+| \- 13B FastV (K=2 R=25%)      | 81.8  | 0.181s                                  | 29G        |
+| \- 13B FastV (K=2 R=50%)      | 81.3  | 0.155s                                  | 28G        |
+| \- 13B FastV (K=2 R=75%)      | 80.9  | **0.124s**                                  | 27G        |
+| 13B Vanilla Decoding 4Bit     | 81.5  | 0.308s                                  | 12G        |
+| \- 13B FastV 4Bit (K=2 R=25%) | 81.7  | 0.277s                                  | 11G        |
+| \- 13B FastV 4Bit (K=2 R=50%) | 81.1  | 0.275s                                  | 10G        |
+| \- 13B FastV 4Bit (K=2 R=75%) | 80.3  | 0.245s                                  | **9G**         |
 
-This code implements the latency test of FastV using inplace token dropping instead of token masking (support K>0). It is not compatible with kv-cache yet, must be used with "use_cache=False" in the generate function.
+This code implements the latency test of FastV using inplace token dropping instead of token masking (support K>0). It is not compatible with kv-cache yet, must be used with "use_cache=False" in the generate function. FastV is also compatible with model quantization, just set the 4bit/8bit flag to be true from [inference_aokvqa.py](https://github.com/pkunlp-icler/FastV/blob/main/src/FastV/inference/eval/inference_aokvqa.py#L192) to see the performance.
 
 The main implementation of FastV is in the forward function of LlamaModel from [modeling_llama.py](https://github.com/pkunlp-icler/FastV/blob/main/src/transformers/src/transformers/models/llama/modeling_llama.py#L730) of transformers repo.
 
