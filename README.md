@@ -110,7 +110,7 @@ The main implementation of FastV is in the forward function of LlamaModel from [
 
 ### Support KV Cache
 
-Current implementation is not compatible with kv-cache yet, must be used with "use_cache=False" in the generate function. FastV has no theoretical conflict with kv-cache, and the feature would be added soon to support more models in huggingface.
+Current implementation (FastV Inplace) is not compatible with kv-cache yet, must be used with "use_cache=False" in the generate function. FastV has no theoretical conflict with kv-cache, and the feature would be added soon to support more models in huggingface.
 
 Stay tuned!
 
