@@ -106,11 +106,11 @@ bash ./src/FastV/inference/eval/eval_aokvqa_latency_fastv_inplace.sh
 
 This code implements the latency test of FastV using inplace token dropping instead of token masking (support K>0). FastV is also compatible with model quantization, just set the 4bit/8bit flag to be true from [inference_aokvqa.py](https://github.com/pkunlp-icler/FastV/blob/main/src/FastV/inference/eval/inference_aokvqa.py#L192) to see the performance.
 
-Current implementation is not compatible with kv-cache yet, must be used with "use_cache=False" in the generate function. It has no theoritcal conflict with kv-cache, and the feature would be added soon to support more models in huggingface.
-
 The main implementation of FastV is in the forward function of LlamaModel from [modeling_llama.py](https://github.com/pkunlp-icler/FastV/blob/main/src/transformers/src/transformers/models/llama/modeling_llama.py#L730) of transformers repo.
 
 ### Support KV Cache
+
+Current implementation is not compatible with kv-cache yet, must be used with "use_cache=False" in the generate function. FastV has no theoretical conflict with kv-cache, and the feature would be added soon to support more models in huggingface.
 
 Stay tuned!
 
