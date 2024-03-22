@@ -12,11 +12,16 @@
 
 
 
-https://github.com/pkunlp-icler/FastV/assets/43977888/be92b9b3-c1c0-4c50-80e3-4423e8312b09
+
+
+
 
 
 
 <div align=center>
+    
+https://github.com/pkunlp-icler/FastV/assets/43977888/e6ae44b9-ebb9-4b69-b534-cee3441b1d22
+
 <img width="600" src="./figs/fastv_tradeoff.png"/>
 </div>
 
@@ -28,8 +33,8 @@ https://github.com/pkunlp-icler/FastV/assets/43977888/be92b9b3-c1c0-4c50-80e3-44
 2. - [x] LVLM Inefficent Visual Attention Visualization Code
 3. - [x] FastV Inference and Evaluation
 4. - [x] Latency Test Reproduction
-5. - [x] Support HuggingFace Models
-6. - [ ]  KV Cache
+5. - [x] Support HuggingFace Models (LLaVA)
+6. - [ ] Support KV Cache
 
 Stay tuned!
 
@@ -117,7 +122,7 @@ The main implementation of FastV is in the forward function of LlamaModel from [
 
 ### Support HuggingFace LLaVA model
 
-Updated soon
+Coming soon (same as the video demo)
 
 ### Support KV Cache
 
