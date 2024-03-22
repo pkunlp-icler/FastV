@@ -93,9 +93,6 @@ Results
 </div>
 
 
-## Integrate FastV to LLM inference framework
-
-
 ### Latency Experiment Reproduction
 You could use following code to reproduce FastV's latency experiment on aokvqa. We conduct the following experiments on one A100 GPU (80G) 
 
@@ -119,6 +116,11 @@ bash ./src/FastV/inference/eval/eval_aokvqa_latency_fastv_inplace.sh
 This code implements the latency test of FastV using inplace token dropping instead of token masking (support K>0). FastV is also compatible with model quantization, just set the 4bit/8bit flag to be true from [inference_aokvqa.py](https://github.com/pkunlp-icler/FastV/blob/main/src/FastV/inference/eval/inference_aokvqa.py#L192) to see the performance.
 
 The main implementation of FastV is in the forward function of LlamaModel from [modeling_llama.py](https://github.com/pkunlp-icler/FastV/blob/main/src/transformers/src/transformers/models/llama/modeling_llama.py#L730) of transformers repo.
+
+
+
+## Integrate FastV to LLM inference framework
+
 
 ### Support HuggingFace LLaVA model
 
