@@ -126,6 +126,7 @@ To use FastV with HF's model (currently support LLaVA), you need to install the 
 
 ```bash
 conda create -n fastv-hf python=3.10
+conda activate fastv-hf
 cd ./src/FastV/llava-hf/transformers
 pip install -e .
 ```
