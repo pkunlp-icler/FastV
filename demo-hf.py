@@ -33,8 +33,8 @@ inputs = processor(prompt, raw_image, return_tensors='pt').to(0, torch.float16)
 
 streamer = TextStreamer(processor)
 
-# print("----------------------------FastV-------------------------------")
-# print(fastv_config)
+print("----------------------------FastV-------------------------------")
+print(fastv_config)
 
 time_start = time.time()
 
@@ -42,7 +42,7 @@ time_start = time.time()
 output = model.generate(
                     **inputs,
                     min_new_tokens=200, 
-                    max_new_tokens=205, 
+                    max_new_tokens=250, 
                     do_sample=False, 
                     use_cache=False, 
                     streamer = streamer,

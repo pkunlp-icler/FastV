@@ -129,10 +129,11 @@ conda create -n fastv-hf python=3.10
 conda activate fastv-hf
 cd ./src/FastV/llava-hf/transformers
 pip install -e .
+pip install pillow torch accelerate
 ```
 
 
-You could simply pass a `fastv_config` dict to the `LlavaForConditionalGeneration` class to enable FastV decoding acceleration. We provide a demo in `./src/FastV/llava-hf/demo.py`.
+You could simply pass a `fastv_config` dict to the `LlavaForConditionalGeneration` class to enable FastV decoding acceleration. We provide a python demo in `./demo-hf.py`.
 
 ```python
 import requests
