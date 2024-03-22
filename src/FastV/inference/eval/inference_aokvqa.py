@@ -190,7 +190,7 @@ if __name__=="__main__":
         temperature = 0.2
         max_new_tokens = 512
         load_8bit = False
-        load_4bit = False
+        load_4bit = True
         debug = False
         image_aspect_ratio = 'pad'
         pca_prompt_data = ''

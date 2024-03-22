@@ -122,7 +122,54 @@ The main implementation of FastV is in the forward function of LlamaModel from [
 
 ### Support HuggingFace LLaVA model
 
-Coming soon (same as the video demo)
+To use FastV with HF's model (currently support LLaVA), you need to install the latest transformer with fastv updated. (Note that [HF's LLaVA](https://huggingface.co/llava-hf/llava-1.5-13b-hf) is different from [original LLaVA implementation](https://github.com/haotian-liu/LLaVA))
+
+```bash
+conda create -n fastv-hf python=3.10
+cd ./src/FastV/llava-hf/transformers
+pip install -e .
+```
+
+
+You could simply pass a `fastv_config` dict to the `LlavaForConditionalGeneration` class to enable FastV decoding acceleration. We provide a demo in `./src/FastV/llava-hf/demo.py`.
+
+```python
+import requests
+from PIL import Image
+import time
+
+import torch
+from transformers import AutoProcessor, LlavaForConditionalGeneration, TextStreamer
+
+model_id = "llava-hf/llava-1.5-13b-hf"
+
+prompt = "USER: <image>\nWhat are these? Describe the image in details\nASSISTANT:"
+image_file = "http://images.cocodataset.org/val2017/000000039769.jpg"
+
+fastv_config = {
+    "use_fastv": True,
+    "fastv_k": 3,
+    "fastv_r": 0.75,
+    "image_token_start_index": 5, 
+    "image_token_length": 576 
+}
+
+model = LlavaForConditionalGeneration.from_pretrained(
+    model_id, 
+    torch_dtype=torch.float16, 
+    low_cpu_mem_usage=True, 
+    attn_implementation="eager",
+    fastv_config = fastv_config, # comment this line to use vanilla decoding
+).to(0)
+
+processor = AutoProcessor.from_pretrained(model_id)
+
+raw_image = Image.open(requests.get(image_file, stream=True).raw)
+inputs = processor(prompt, raw_image, return_tensors='pt').to(0, torch.float16)
+
+output = model.generate(**inputs,min_new_tokens=300, max_new_tokens=500,do_sample=False, use_cache=False, return_dict_in_generate=True)
+
+```
 
 ### Support KV Cache
 

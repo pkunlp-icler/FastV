@@ -1,6 +1,6 @@
 export CUDA_VISIBLE_DEVICES=0
 
-model_path=./models/llava-v1.5-13b
+model_path=/cpfs01/user/cl424408/models/llava-v1.5-13b
 output_path=aokvqa_eval_fastv
 mkdir -p $output_path
 
@@ -18,7 +18,7 @@ for rank in ${rank_list[@]}; do
         --fast-v-image-token-length 576 \
         --fast-v-attention-rank $rank \
         --fast-v-agg-layer $k \
-        --output-path $output_path/aokvqa_13b_FASTV_inplace_${rank}_${k}.json 
+        --output-path $output_path/aokvqa_13b_FASTV_4bit_inplace_${rank}_${k}.json 
     done
 done
 
