@@ -10,6 +10,12 @@
 
 *FastV is a plug-and-play inference acceleration method for large vision language models relying on visual tokens. It could reach 45\% theoretical FLOPs reduction without harming the performance through pruning redundant visual tokens in deep layers.*
 
+
+
+https://github.com/pkunlp-icler/FastV/assets/43977888/be92b9b3-c1c0-4c50-80e3-4423e8312b09
+
+
+
 <div align=center>
 <img width="600" src="./figs/fastv_tradeoff.png"/>
 </div>
@@ -22,7 +28,8 @@
 2. - [x] LVLM Inefficent Visual Attention Visualization Code
 3. - [x] FastV Inference and Evaluation
 4. - [x] Latency Test Reproduction
-5. - [ ] Support KV Cache
+5. - [x] Support HuggingFace Models
+6. - [ ]  KV Cache
 
 Stay tuned!
 
@@ -107,6 +114,10 @@ bash ./src/FastV/inference/eval/eval_aokvqa_latency_fastv_inplace.sh
 This code implements the latency test of FastV using inplace token dropping instead of token masking (support K>0). FastV is also compatible with model quantization, just set the 4bit/8bit flag to be true from [inference_aokvqa.py](https://github.com/pkunlp-icler/FastV/blob/main/src/FastV/inference/eval/inference_aokvqa.py#L192) to see the performance.
 
 The main implementation of FastV is in the forward function of LlamaModel from [modeling_llama.py](https://github.com/pkunlp-icler/FastV/blob/main/src/transformers/src/transformers/models/llama/modeling_llama.py#L730) of transformers repo.
+
+### Support HuggingFace LLaVA model
+
+Updated soon
 
 ### Support KV Cache
 
