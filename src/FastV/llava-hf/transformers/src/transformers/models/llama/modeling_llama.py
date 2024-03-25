@@ -1029,42 +1029,81 @@ class LlamaModel(LlamaPreTrainedModel):
                 all_hidden_states += (hidden_states,)
 
             # pruning hidden states after layer k, no kv cache
+            if use_cache:
+                if hidden_states.shape[1] != 1:
+                    if layer_idx<FASTV_k:
+                        pruned_attention_mask = causal_mask
 
-            if layer_idx<FASTV_k:
-                pruned_attention_mask = causal_mask
+                    elif layer_idx==FASTV_k:
+                        # compute pruned tokens, generate fastv sign
+                        last_layer_attention = layer_outputs[1]
+                        # compute average attention over different head
+                        last_layer_attention_avg = torch.mean(last_layer_attention, dim=1)[0]
+                        # generate new attention mask based on the average attention, sample the top ATTENTION_RANK tokens with highest attention
+                        last_layer_attention_avg_last_tok = last_layer_attention_avg[-1]
+                        # get the attention in image token
+                        last_layer_attention_avg_last_tok_image = last_layer_attention_avg_last_tok[FASTV_image_token_start_index:FASTV_image_token_start_index+FASTV_image_token_length]
+                        # get the indexs of the top ATTENTION_RANK tokens
+                        top_attention_rank_index = last_layer_attention_avg_last_tok_image.topk(round(FASTV_image_token_length*(1-FASTV_r))).indices + FASTV_image_token_start_index
+                        # keep index
 
-            elif layer_idx==FASTV_k:
-                # compute pruned tokens, generate fastv sign
-                last_layer_attention = layer_outputs[1]
-                # compute average attention over different head
-                last_layer_attention_avg = torch.mean(last_layer_attention, dim=1)[0]
-                # generate new attention mask based on the average attention, sample the top ATTENTION_RANK tokens with highest attention
-                last_layer_attention_avg_last_tok = last_layer_attention_avg[-1]
-                # get the attention in image token
-                last_layer_attention_avg_last_tok_image = last_layer_attention_avg_last_tok[FASTV_image_token_start_index:FASTV_image_token_start_index+FASTV_image_token_length]
-                # get the indexs of the top ATTENTION_RANK tokens
-                top_attention_rank_index = last_layer_attention_avg_last_tok_image.topk(round(FASTV_image_token_length*(1-FASTV_r))).indices + FASTV_image_token_start_index
-                # keep index
+                        # import pdb
+                        # pdb.set_trace() # fix bug in rotary embedding HACK
 
-                # import pdb
-                # pdb.set_trace() # fix bug in rotary embedding HACK
+                        keep_indexs = torch.cat( (torch.arange(FASTV_image_token_start_index,device=device), top_attention_rank_index, torch.arange(FASTV_image_token_start_index+FASTV_image_token_length,seq_length_with_past,device=device)))
+                        # sort index
+                        keep_indexs = keep_indexs.sort().values
+                        # update seq length
+                        new_seq_length = keep_indexs.shape[0]
+                        # filter hidden states
+                            
+                        hidden_states = hidden_states[:,keep_indexs,:] # lead the cuda error in the second iteration of decoding layeridx 3
+                        # update position ids
+                        position_ids = keep_indexs.unsqueeze(0)
+                        # update attention mask
+                        pruned_attention_mask = self._update_causal_mask(
+                            None, hidden_states, 0
+                        )
 
-                keep_indexs = torch.cat( (torch.arange(FASTV_image_token_start_index,device=device), top_attention_rank_index, torch.arange(FASTV_image_token_start_index+FASTV_image_token_length,seq_length_with_past,device=device)))
-                # sort index
-                keep_indexs = keep_indexs.sort().values
-                # update seq length
-                new_seq_length = keep_indexs.shape[0]
-                # filter hidden states
-                hidden_states = hidden_states[:,keep_indexs,:]
-                # update position ids
-                position_ids = keep_indexs.unsqueeze(0)
-                # update attention mask
-                pruned_attention_mask = self._update_causal_mask(
-                    None, hidden_states, 0
-                )
+                        cache_position = cache_position[:new_seq_length]
+                else:
+                    pruned_attention_mask = causal_mask
+            else:
+                if layer_idx<FASTV_k:
+                    pruned_attention_mask = causal_mask
 
-                cache_position = cache_position[:new_seq_length]
+                elif layer_idx==FASTV_k:
+                    # compute pruned tokens, generate fastv sign
+                    last_layer_attention = layer_outputs[1]
+                    # compute average attention over different head
+                    last_layer_attention_avg = torch.mean(last_layer_attention, dim=1)[0]
+                    # generate new attention mask based on the average attention, sample the top ATTENTION_RANK tokens with highest attention
+                    last_layer_attention_avg_last_tok = last_layer_attention_avg[-1]
+                    # get the attention in image token
+                    last_layer_attention_avg_last_tok_image = last_layer_attention_avg_last_tok[FASTV_image_token_start_index:FASTV_image_token_start_index+FASTV_image_token_length]
+                    # get the indexs of the top ATTENTION_RANK tokens
+                    top_attention_rank_index = last_layer_attention_avg_last_tok_image.topk(round(FASTV_image_token_length*(1-FASTV_r))).indices + FASTV_image_token_start_index
+                    # keep index
 
+                    # import pdb
+                    # pdb.set_trace() # fix bug in rotary embedding HACK
+
+                    keep_indexs = torch.cat( (torch.arange(FASTV_image_token_start_index,device=device), top_attention_rank_index, torch.arange(FASTV_image_token_start_index+FASTV_image_token_length,seq_length_with_past,device=device)))
+                    # sort index
+                    keep_indexs = keep_indexs.sort().values
+                    # update seq length
+                    new_seq_length = keep_indexs.shape[0]
+                    # filter hidden states
+                        
+                    hidden_states = hidden_states[:,keep_indexs,:] # lead the cuda error in the second iteration of decoding layeridx 3
+                    # update position ids
+                    position_ids = keep_indexs.unsqueeze(0)
+                    # update attention mask
+                    pruned_attention_mask = self._update_causal_mask(
+                        None, hidden_states, 0
+                    )
+
+                    cache_position = cache_position[:new_seq_length]      
                 
 
 

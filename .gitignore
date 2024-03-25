@@ -34,7 +34,6 @@ gradio_temp/
 *.hbs
 *.html
 *.ini
-*.json
 *.log
 *.markdown
 *.md
@@ -73,4 +72,4 @@ tmp
 Icon?
 ehthumbs.db
 Thumbs.db
-
+*.ipynb
