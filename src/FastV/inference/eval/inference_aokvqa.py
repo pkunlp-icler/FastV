@@ -149,12 +149,12 @@ def format_anwser(choices,anwser_index):
     # example: choices: ['Phoenix', 'Baton Rouge', 'Honolulu', 'Cheyenne'] , anwser_index:0 -> "(A) Phoenix"
     return f"{chr(ord('A') + anwser_index)}"
 
-dataset = load_from_disk("./data/aokvqa")
+dataset = load_from_disk("./data/aokvqa/validation")
 
-valid_images = dataset["validation"]["image"]
-valid_questions = dataset["validation"]["question"]
-valid_choices = dataset["validation"]["choices"]
-valid_anwser = dataset["validation"]["correct_choice_idx"]
+valid_images = dataset["image"]
+valid_questions = dataset["question"]
+valid_choices = dataset["choices"]
+valid_anwser = dataset["correct_choice_idx"]
 
 valid_anwser_options = [format_anwser(valid_choices[i],valid_anwser[i]) for i in range(len(valid_choices))]
 valid_prompt = [TEMPLATE.format(question=question, options=format_choices(choice)) for question, choice in zip(valid_questions, valid_choices)]
