@@ -44,7 +44,7 @@ output = model.generate(
                     min_new_tokens=250, 
                     max_new_tokens=250, 
                     do_sample=False, 
-                    use_cache=True, 
+                    use_cache=False, 
                     streamer = streamer,
                     return_dict_in_generate=True
                     )
