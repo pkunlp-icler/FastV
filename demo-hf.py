@@ -5,7 +5,7 @@ import time
 import torch
 from transformers import AutoProcessor, LlavaForConditionalGeneration, TextStreamer
 
-model_id = "llava-hf/llava-1.5-13b-hf"
+model_id = "/cpfs01/user/cl424408/models/llava-hf-llava-1.5-13b-hf"
 
 prompt = "USER: <image>\nWhat are these? Describe the image in details\nASSISTANT:"
 image_file = "http://images.cocodataset.org/val2017/000000039769.jpg"
@@ -23,7 +23,7 @@ model = LlavaForConditionalGeneration.from_pretrained(
     torch_dtype=torch.float16, 
     low_cpu_mem_usage=True, 
     attn_implementation="eager",
-    fastv_config = fastv_config, # comment this line to use vanilla decoding
+    # fastv_config = fastv_config, # comment this line to use vanilla decoding
 ).to(0)
 
 processor = AutoProcessor.from_pretrained(model_id)
@@ -41,10 +41,10 @@ time_start = time.time()
 
 output = model.generate(
                     **inputs,
-                    min_new_tokens=200, 
+                    min_new_tokens=250, 
                     max_new_tokens=250, 
                     do_sample=False, 
-                    use_cache=False, 
+                    use_cache=True, 
                     streamer = streamer,
                     return_dict_in_generate=True
                     )
