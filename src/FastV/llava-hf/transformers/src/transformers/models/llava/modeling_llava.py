@@ -429,10 +429,6 @@ class LlavaForConditionalGeneration(LlavaPreTrainedModel):
 
                 image_features = self.multi_modal_projector(selected_image_feature)
 
-                # make image features 8x its size
-                image_features = torch.cat([image_features] * 13, dim=1)
-            
-
                 inputs_embeds, attention_mask, labels, position_ids = self._merge_input_ids_with_image_features(
                     image_features, inputs_embeds, input_ids, attention_mask, labels
                 )

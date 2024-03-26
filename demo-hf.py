@@ -15,7 +15,7 @@ fastv_config = {
     "fastv_k": 3,
     "fastv_r": 0.75,
     "image_token_start_index": 5, 
-    "image_token_length": 576*13 
+    "image_token_length": 576
 }
 
 model = LlavaForConditionalGeneration.from_pretrained(
