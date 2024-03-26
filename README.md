@@ -32,9 +32,10 @@ https://github.com/pkunlp-icler/FastV/assets/43977888/e6ae44b9-ebb9-4b69-b534-ce
 1. - [x] Visualization [Online Demo](https://www.fastv.work/)
 2. - [x] LVLM Inefficent Visual Attention Visualization Code
 3. - [x] FastV Inference and Evaluation
-4. - [x] Latency Test Reproduction
+4. - [x] Latency Test Reproduction Guideline
 5. - [x] Support HuggingFace Models (LLaVA)
-6. - [ ] Support KV Cache
+6. - [x] Support KV Cache
+7. - [x] Support lmms-eval and report results
 
 Stay tuned!
 
@@ -177,9 +178,24 @@ output = model.generate(**inputs,min_new_tokens=300, max_new_tokens=500,do_sampl
 
 ### Support KV Cache
 
-Current implementation (FastV Inplace) is not compatible with kv-cache yet, must be used with "use_cache=False" in the generate function. FastV has no theoretical conflict with kv-cache, and the feature would be added soon to support more models in huggingface.
+Now you can set `use_cache=True` in the generate function of `./demo-hf.py` to enable fastv with static kv-cache pruning. Note that, the implementation is slightly different from original fastv, all decoding tokens now attend to the same image tokens after pruning in the first forward process. While in the original fastv, the full image tokens would be re-pruned in each forward pass. 
 
-Stay tuned!
+### Support LMMs-Eval
+
+[LMMs-Eval](https://github.com/EvolvingLMMs-Lab/lmms-eval) is an easy-to-use evaluation framework for lmms including various lmm benchmarks. You could follow `./src/FastV/lmms-eval/README.md` to update LLaVA with fastv to test the performance of fastv using lmms-eval. Some evaluation results with lmms-eval (keeping updating).
+
+| LLaVA-1.5-7B   | Baseline (FLOPS=100%) | FastV K=3 R=50% (FLOPS=57%) |
+|:--------------:|:--------:|:---------------:|
+| Nocaps (cider) | 105.5    | 105.5           |
+| MMMU (acc)     | 35.3     | 35.2            |
+| MME-Cognition  | 348.2    | 349.3           |
+| MME-Perception | 1510.8   | 1511.7          |
+
+
+## Acknowledgements
+
+Thanks [Zhihang Lin](https://github.com/Stardust1956) from Xiamen University for his contribution in the kv-cache and lmms-eval part.
+
 
 
 ## Citation
