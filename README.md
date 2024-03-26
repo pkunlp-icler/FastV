@@ -36,7 +36,6 @@ https://github.com/pkunlp-icler/FastV/assets/43977888/e6ae44b9-ebb9-4b69-b534-ce
 5. - [x] Support HuggingFace Models (LLaVA)
 6. - [x] Support KV Cache
 7. - [x] Support lmms-eval and report results
-8. - [ ] Support more LMMs
 
 Stay tuned!
 
