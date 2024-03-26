@@ -178,7 +178,7 @@ output = model.generate(**inputs,min_new_tokens=300, max_new_tokens=500,do_sampl
 
 ### Support KV Cache
 
-Now you can set `use_cache=True` in the generate function of `./demo-hf.py` to enable fastv with static kv-cache pruning. Note that, the implementation is slightly different from original fastv, all decoding tokens now attend to the same image tokens after pruning in the first forward process. While in the original fastv, the full image tokens would be re-pruned in each forward pass. 
+Now, by setting use_cache=True in the generate function of ./demo-hf.py, you can activate fastv with the added efficiency of static kv-cache pruning. It's important to note that this implementation diverges slightly from the original version of fastv. In our approach, once pruning occurs in the initial forward process, all subsequent decoding tokens uniformly attend to the same set of image tokens. This contrasts with the original fastv method, where image tokens were subject to re-pruning during each forward pass. Our findings indicate that enabling kv-cache in fastv results in a consistent reduction in CUDA memory usage, alongside a modest decrease in latency (approximately 8%). This efficiency gain is primarily limited by the current short length of image tokens in tasks involving single image understanding. However, in contexts requiring video understanding, which involves around 2,000 image tokens, the latency reduction achieved by fastv (with K=2 and R=50%) can reach up to 25%.
 
 ### Support LMMs-Eval
 
