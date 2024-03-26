@@ -15,7 +15,7 @@ fastv_config = {
     "fastv_k": 3,
     "fastv_r": 0.75,
     "image_token_start_index": 5, 
-    "image_token_length": 576 
+    "image_token_length": 576*13 
 }
 
 model = LlavaForConditionalGeneration.from_pretrained(
@@ -23,7 +23,7 @@ model = LlavaForConditionalGeneration.from_pretrained(
     torch_dtype=torch.float16, 
     low_cpu_mem_usage=True, 
     attn_implementation="eager",
-    # fastv_config = fastv_config, # comment this line to use vanilla decoding
+    fastv_config = fastv_config, # comment this line to use vanilla decoding
 ).to(0)
 
 processor = AutoProcessor.from_pretrained(model_id)
@@ -41,10 +41,10 @@ time_start = time.time()
 
 output = model.generate(
                     **inputs,
-                    min_new_tokens=250, 
-                    max_new_tokens=250, 
+                    min_new_tokens=500, 
+                    max_new_tokens=500, 
                     do_sample=False, 
-                    use_cache=False, 
+                    use_cache=True, 
                     streamer = streamer,
                     return_dict_in_generate=True
                     )

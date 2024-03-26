@@ -1053,7 +1053,7 @@ class LlamaModel(LlamaPreTrainedModel):
                         # update seq length
                         new_seq_length = keep_indexs.shape[0]
                         # filter hidden states
-                        hidden_states = hidden_states[:,keep_indexs,:] # lead the cuda error in the second iteration of decoding layeridx 3
+                        hidden_states = hidden_states[:,keep_indexs,:] 
                         # update position ids
                         position_ids = keep_indexs.unsqueeze(0)
                         # update attention mask
