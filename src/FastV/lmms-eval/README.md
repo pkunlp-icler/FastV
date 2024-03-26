@@ -13,7 +13,7 @@ pip install -e .
 ```
 3. put `fastv_kvcache.py` under `llava/model/language_model/`
 
-4. replace `LlavaLlamaModel` from `llava/model/language_model/llava_llama.py` to following code:
+4. replace `LlavaLlamaModel` from `llava/model/language_model/llava_llama.py` with following code:
 ```python
 from .fastv_kvcache import FastVLlamaModel
 class LlavaLlamaModel(LlavaMetaModel, FastVLlamaModel): # Alter LlamaModel to  FastVLlamaModel
@@ -23,9 +23,9 @@ class LlavaLlamaModel(LlavaMetaModel, FastVLlamaModel): # Alter LlamaModel to  F
         super(LlavaLlamaModel, self).__init__(config)
 ```
 
-You could change the K and R hyper-parameters of FastV in line 119 and 120.
+HINT: You could change the K and R hyper-parameters of FastV in line 119 and 120.
 
-5. Go to your `transformers/src/transformers/models/llama/modeling_llama.py`, change **all three** 
+5. Go to your `transformers/src/transformers/models/llama/modeling_llama.py` in the conda envs, change **all three** 
 ```python
 cos, sin = self.rotary_emb(value_states, seq_len=kv_seq_len)
 ```
@@ -35,7 +35,7 @@ from different attention implementation, to
 cos, sin = self.rotary_emb(value_states, seq_len=position_ids.max().item() + 1)
 ```
 
-6. Finishing the steps ahead, the updated llava directly supports [lmms-eval](https://github.com/EvolvingLMMs-Lab/lmms-eval) repo for more convinent evaluation of fastv。
+6. After finishing the steps ahead, the updated llava directly supports [lmms-eval](https://github.com/EvolvingLMMs-Lab/lmms-eval) repo for more convinent evaluation of fastv.
 
 ## Acknowledgements
 
