@@ -41,10 +41,10 @@ time_start = time.time()
 
 output = model.generate(
                     **inputs,
-                    min_new_tokens=500, 
-                    max_new_tokens=500, 
+                    min_new_tokens=200, 
+                    max_new_tokens=200, 
                     do_sample=False, 
-                    use_cache=True, 
+                    use_cache=False, 
                     streamer = streamer,
                     return_dict_in_generate=True
                     )
