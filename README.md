@@ -184,7 +184,7 @@ Our findings indicate that enabling kv-cache in fastv results in a consistent re
 
 ### Support LMMs-Eval
 
-[LMMs-Eval](https://github.com/EvolvingLMMs-Lab/lmms-eval) is an easy-to-use evaluation framework for lmms including various lmm benchmarks. You could follow `./src/FastV/lmms-eval/README.md` to update LLaVA with fastv to test the performance of fastv using lmms-eval. Some evaluation results with lmms-eval are listed below (🔥keeping updating):
+[LMMs-Eval](https://github.com/EvolvingLMMs-Lab/lmms-eval) is an easy-to-use evaluation framework for lmms including various lmm benchmarks. You could follow `./src/FastV/lmms-eval/README.md` to update LLaVA with fastv to test the performance of fastv using lmms-eval. Some evaluation results with lmms-eval are listed below:
 
 | LLaVA-1.5-7B   | Baseline (FLOPS=100%) | FastV K=3 R=50% (FLOPS=57%) |
 |:--------------:|:--------:|:---------------:|
