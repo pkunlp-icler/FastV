@@ -188,13 +188,13 @@ Our findings indicate that enabling kv-cache in fastv results in a consistent re
 
 | LLaVA-1.5-7B   | Baseline (FLOPS=100%) | FastV K=3 R=50% (FLOPS=57%) |
 |:--------------:|:--------:|:---------------:|
-| Nocaps (cider) | 105.5    | 105.5           |
-| cococap_val_2014 (cider) | 108.7   | 108.4         |
-| cococap_val_2017 (cider) | 110.4   | 110.8          |
-| Flickr30K | 74.9  | 74.7          |
-| GQA | 62.0   | 60.4          |
+| Nocaps (CIDEr) | 105.5    | 105.5           |
+| cococap_val_2014 (CIDEr) | 108.7   | 108.4         |
+| cococap_val_2017 (CIDEr) | 110.4   | 110.8          |
+| Flickr30K (CIDEr) | 74.9  | 74.7          |
+| GQA | 62.0 (Acc)  | 60.4          |
 | SEED-Bench (Image-acc)    | 60.5     | 59.9            |
-| MMMU (acc)     | 35.3     | 35.2            |
+| MMMU (Acc)     | 35.3     | 35.2            |
 | MME-Cognition  | 348.2    | 349.3           |
 | MME-Perception | 1510.8   | 1511.7          |
 
