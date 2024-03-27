@@ -192,7 +192,7 @@ Our findings indicate that enabling kv-cache in fastv results in a consistent re
 | cococap_val_2014 (CIDEr) | 108.7   | 108.4         |
 | cococap_val_2017 (CIDEr) | 110.4   | 110.8          |
 | Flickr30K (CIDEr) | 74.9  | 74.7          |
-| GQA | 62.0 (Acc)  | 60.4          |
+| GQA (Acc) | 62.0   | 60.4          |
 | SEED-Bench (Image-acc)    | 60.5     | 59.9            |
 | MMMU (Acc)     | 35.3     | 35.2            |
 | MME-Cognition  | 348.2    | 349.3           |
