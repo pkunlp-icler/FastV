@@ -18,9 +18,18 @@
 
 
 
+
+
+
 <div align=center>
+
+Tutorial video on youtube. Thanks to [
+Soroush Mehraban](https://www.youtube.com/@soroushmehraban)!
+
+[![Explaining Video](https://img.youtube.com/vi/V0I6ntvb9pQ/0.jpg)](https://www.youtube.com/watch?v=V0I6ntvb9pQ)
     
 https://github.com/pkunlp-icler/FastV/assets/43977888/e6ae44b9-ebb9-4b69-b534-cee3441b1d22
+
 
 <img width="600" src="./figs/fastv_tradeoff.png"/>
 </div>
@@ -201,7 +210,7 @@ Our findings indicate that enabling kv-cache in fastv results in a consistent re
 
 ## Acknowledgements
 
-Thanks [Zhihang Lin](https://github.com/Stardust1956) from Xiamen University for his contribution in the kv-cache and lmms-eval part.
+Thanks to [Zhihang Lin](https://github.com/Stardust1956) from Xiamen University for his contribution in the kv-cache and lmms-eval part.
 
 
 
