@@ -5,24 +5,18 @@ import time
 torch.manual_seed(1234)
 
 # Note: The default behavior now has injection attack prevention off.
-tokenizer = AutoTokenizer.from_pretrained("/cpfs01/user/cl424408/models/Qwen-VL-Chat-0328", trust_remote_code=True)
+tokenizer = AutoTokenizer.from_pretrained("/home/cl/models/Qwen-VL-Chat", trust_remote_code=True)
 
-# use bf16
-# model = AutoModelForCausalLM.from_pretrained("/cpfs01/user/cl424408/models/Qwen-VL-Chat-0328", device_map="auto", trust_remote_code=True, bf16=True).eval()
-# use fp16
-# model = AutoModelForCausalLM.from_pretrained("/cpfs01/user/cl424408/models/Qwen-VL-Chat-0328", device_map="auto", trust_remote_code=True, fp16=True).eval()
-# use cpu only
-# model = AutoModelForCausalLM.from_pretrained("/cpfs01/user/cl424408/models/Qwen-VL-Chat-0328", device_map="cpu", trust_remote_code=True).eval()
-# use cuda device
-model = AutoModelForCausalLM.from_pretrained("/cpfs01/user/cl424408/models/Qwen-VL-Chat-0328", device_map="cuda", trust_remote_code=True).eval()
+
+model = AutoModelForCausalLM.from_pretrained("/home/cl/models/Qwen-VL-Chat", device_map="cuda", trust_remote_code=True).eval()
 
 # Specify hyperparameters for generation
-model.generation_config = GenerationConfig.from_pretrained("/cpfs01/user/cl424408/models/Qwen-VL-Chat-0328", trust_remote_code=True)
+model.generation_config = GenerationConfig.from_pretrained("/home/cl/models/Qwen-VL-Chat", trust_remote_code=True)
 
 # 1st dialogue turn
 query = tokenizer.from_list_format([
     {'image': 'https://qianwen-res.oss-cn-beijing.aliyuncs.com/Qwen-VL/assets/demo.jpeg'}, # Either a local path or an url
-    {'text': '这是什么?'},
+    {'text': '这是什么? 请详细描述'},
 ])
 
 
