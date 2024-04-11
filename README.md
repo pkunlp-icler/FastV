@@ -94,7 +94,7 @@ We provide code to reproduce the ablation study on K and R values, as shown in f
 
 *ocrvqa*
 ```bash
-bash ./src/FastV/inference/eval/eval_ocrvqa_fastv_token_mask
+bash ./src/FastV/inference/eval/eval_ocrvqa_fastv_token_mask.sh
 ```
 
 <div align=center>
