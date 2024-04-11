@@ -134,9 +134,9 @@ dataset_ocrvqa_images = []
 dataset_ocrvqa_prompts = []
 dataset_ocrvqa_labels = []
 
-dataset = load_dataset("/cpfs01/shared/public/cl/datasets/OCR-VQA")['test']
+dataset = load_dataset("howard-hou/OCR-VQA")['test'] # load from huggingface dataset
 
-N_examples = 500 # samnple 500 examples for fast testing
+N_examples = 500 # sample first 500 examples for fast testing
 cur_num=0
 
 for i in dataset:
