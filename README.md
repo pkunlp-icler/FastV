@@ -8,6 +8,8 @@
 <img alt="Static Badge" src="https://img.shields.io/badge/Demo-Gradio-yellow"></a>
 </p>
 
+*2024.07.01: FastV is accepted to ECCV 2024!*
+
 *FastV is a plug-and-play inference acceleration method for large vision language models relying on visual tokens. It could reach 45\% theoretical FLOPs reduction without harming the performance through pruning redundant visual tokens in deep layers.*
 
 
