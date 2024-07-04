@@ -2,7 +2,7 @@
 
 <p align="center">
 <a href="https://arxiv.org/abs/2403.06764">
-<img alt="Static Badge" src="https://img.shields.io/badge/FastV-2403.06764-red"></a>
+<img alt="Static Badge" src="https://img.shields.io/badge/arXiv-2403.06764-red"></a>
 
 
 
