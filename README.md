@@ -4,6 +4,9 @@
 <a href="https://arxiv.org/abs/2403.06764">
 <img alt="Static Badge" src="https://img.shields.io/badge/arXiv-2403.06764-red"></a>
 
+<a href="https://www.youtube.com/watch?v=V0I6ntvb9pQ">
+<img alt="Static Badge" src="https://img.shields.io/badge/Tutorial-Youtube-yellow"></a>
+
 
 
 *2024.07.01: FastV is accepted to ECCV 2024!*
