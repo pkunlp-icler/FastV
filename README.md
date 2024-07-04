@@ -2,11 +2,9 @@
 
 <p align="center">
 <a href="https://arxiv.org/abs/2403.06764">
-<img alt="Static Badge" src="https://img.shields.io/badge/FastV-ArXiv-red"></a>
+<img alt="Static Badge" src="https://img.shields.io/badge/FastV-2403.06764-red"></a>
 
-<a href="https://www.fastv.work/">
-<img alt="Static Badge" src="https://img.shields.io/badge/Demo-Gradio-yellow"></a>
-</p>
+
 
 *2024.07.01: FastV is accepted to ECCV 2024!*
 
