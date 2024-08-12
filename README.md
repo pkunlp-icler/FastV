@@ -9,6 +9,7 @@
 
 
 *2024.08.13: FastV is selected as Oral Presentation(2%) at ECCV 2024!*
+
 *2024.07.01: FastV is accepted to ECCV 2024!*
 
 *FastV is a plug-and-play inference acceleration method for large vision language models relying on visual tokens. It could reach 45\% theoretical FLOPs reduction without harming the performance through pruning redundant visual tokens in deep layers.*
