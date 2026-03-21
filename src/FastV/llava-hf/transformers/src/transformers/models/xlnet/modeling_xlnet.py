@@ -14,8 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
- PyTorch XLNet model.
+PyTorch XLNet model.
 """
+
 import warnings
 from dataclasses import dataclass
 from typing import List, Optional, Tuple, Union
@@ -25,6 +26,7 @@ from torch import nn
 from torch.nn import BCEWithLogitsLoss, CrossEntropyLoss, MSELoss
 
 from ...activations import ACT2FN
+from ...generation import GenerationMixin
 from ...modeling_utils import PoolerAnswerClass, PoolerEndLogits, PoolerStartLogits, PreTrainedModel, SequenceSummary
 from ...pytorch_utils import apply_chunking_to_forward
 from ...utils import (
@@ -42,12 +44,6 @@ logger = logging.get_logger(__name__)
 
 _CHECKPOINT_FOR_DOC = "xlnet/xlnet-base-cased"
 _CONFIG_FOR_DOC = "XLNetConfig"
-
-XLNET_PRETRAINED_MODEL_ARCHIVE_LIST = [
-    "xlnet/xlnet-base-cased",
-    "xlnet/xlnet-large-cased",
-    # See all XLNet models at https://huggingface.co/models?filter=xlnet
-]
 
 
 def build_tf_xlnet_to_pytorch_map(model, config, tf_weights=None):
@@ -1291,7 +1287,7 @@ class XLNetModel(XLNetPreTrainedModel):
     """,
     XLNET_START_DOCSTRING,
 )
-class XLNetLMHeadModel(XLNetPreTrainedModel):
+class XLNetLMHeadModel(XLNetPreTrainedModel, GenerationMixin):
     _tied_weights_keys = ["lm_loss.weight"]
 
     def __init__(self, config):

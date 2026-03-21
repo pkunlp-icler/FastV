@@ -12,8 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""" PyTorch LED model."""
-
+"""PyTorch LED model."""
 
 import math
 import warnings
@@ -26,6 +25,7 @@ from torch import nn
 from torch.nn import BCEWithLogitsLoss, CrossEntropyLoss, MSELoss
 
 from ...activations import ACT2FN
+from ...generation import GenerationMixin
 from ...modeling_attn_mask_utils import _create_4d_causal_attention_mask
 from ...modeling_outputs import (
     BaseModelOutputWithPastAndCrossAttentions,
@@ -51,12 +51,6 @@ logger = logging.get_logger(__name__)
 
 _CHECKPOINT_FOR_DOC = "allenai/led-base-16384"
 _CONFIG_FOR_DOC = "LEDConfig"
-
-
-LED_PRETRAINED_MODEL_ARCHIVE_LIST = [
-    "allenai/led-base-16384",
-    # See all LED models at https://huggingface.co/models?filter=led
-]
 
 
 def shift_tokens_right(input_ids: torch.Tensor, pad_token_id: int, decoder_start_token_id: int):
@@ -2305,7 +2299,7 @@ class LEDModel(LEDPreTrainedModel):
 @add_start_docstrings(
     "The LED Model with a language modeling head. Can be used for summarization.", LED_START_DOCSTRING
 )
-class LEDForConditionalGeneration(LEDPreTrainedModel):
+class LEDForConditionalGeneration(LEDPreTrainedModel, GenerationMixin):
     base_model_prefix = "led"
     _keys_to_ignore_on_load_missing = ["final_logits_bias"]
     _tied_weights_keys = ["decoder.embed_tokens.weight", "encoder.embed_tokens.weight", "lm_head.weight"]

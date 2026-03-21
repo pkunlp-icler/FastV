@@ -13,7 +13,7 @@
 # limitations under the License.
 from typing import TYPE_CHECKING
 
-from ..utils import _LazyModule
+from ..utils import OptionalDependencyNotAvailable, _LazyModule, is_torch_available
 
 
 _import_structure = {
@@ -21,14 +21,17 @@ _import_structure = {
     "awq": [
         "fuse_awq_modules",
         "post_init_awq_exllama_modules",
+        "replace_quantization_scales",
         "replace_with_awq_linear",
     ],
     "bitsandbytes": [
+        "dequantize_and_replace",
         "get_keys_to_not_convert",
         "replace_8bit_linear",
         "replace_with_bnb_linear",
         "set_module_8bit_tensor_to_device",
         "set_module_quantized_tensor_to_device",
+        "validate_bnb_backend_availability",
     ],
     "deepspeed": [
         "HfDeepSpeedConfig",
@@ -42,6 +45,17 @@ _import_structure = {
         "set_hf_deepspeed_config",
         "unset_hf_deepspeed_config",
     ],
+    "eetq": ["replace_with_eetq_linear"],
+    "fbgemm_fp8": ["FbgemmFp8Linear", "replace_with_fbgemm_fp8_linear"],
+    "ggml": [
+        "GGUF_CONFIG_MAPPING",
+        "GGUF_TENSOR_MAPPING",
+        "GGUF_TOKENIZER_MAPPING",
+        "_gguf_parse_value",
+        "load_dequant_gguf_tensor",
+        "load_gguf",
+    ],
+    "hqq": ["prepare_for_hqq_linear"],
     "integration_utils": [
         "INTEGRATION_TO_CALLBACK",
         "AzureMLCallback",
@@ -85,19 +99,33 @@ _import_structure = {
     "quanto": ["replace_with_quanto_layers"],
 }
 
+try:
+    if not is_torch_available():
+        raise OptionalDependencyNotAvailable()
+except OptionalDependencyNotAvailable:
+    pass
+else:
+    _import_structure["executorch"] = [
+        "TorchExportableModuleWithStaticCache",
+        "convert_and_export_with_cache",
+    ]
+
 if TYPE_CHECKING:
     from .aqlm import replace_with_aqlm_linear
     from .awq import (
         fuse_awq_modules,
         post_init_awq_exllama_modules,
+        replace_quantization_scales,
         replace_with_awq_linear,
     )
     from .bitsandbytes import (
+        dequantize_and_replace,
         get_keys_to_not_convert,
         replace_8bit_linear,
         replace_with_bnb_linear,
         set_module_8bit_tensor_to_device,
         set_module_quantized_tensor_to_device,
+        validate_bnb_backend_availability,
     )
     from .deepspeed import (
         HfDeepSpeedConfig,
@@ -111,6 +139,17 @@ if TYPE_CHECKING:
         set_hf_deepspeed_config,
         unset_hf_deepspeed_config,
     )
+    from .eetq import replace_with_eetq_linear
+    from .fbgemm_fp8 import FbgemmFp8Linear, replace_with_fbgemm_fp8_linear
+    from .ggml import (
+        GGUF_CONFIG_MAPPING,
+        GGUF_TENSOR_MAPPING,
+        GGUF_TOKENIZER_MAPPING,
+        _gguf_parse_value,
+        load_dequant_gguf_tensor,
+        load_gguf,
+    )
+    from .hqq import prepare_for_hqq_linear
     from .integration_utils import (
         INTEGRATION_TO_CALLBACK,
         AzureMLCallback,
@@ -152,6 +191,15 @@ if TYPE_CHECKING:
     )
     from .peft import PeftAdapterMixin
     from .quanto import replace_with_quanto_layers
+
+    try:
+        if not is_torch_available():
+            raise OptionalDependencyNotAvailable()
+    except OptionalDependencyNotAvailable:
+        pass
+    else:
+        from .executorch import TorchExportableModuleWithStaticCache, convert_and_export_with_cache
+
 else:
     import sys
 

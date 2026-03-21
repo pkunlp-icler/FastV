@@ -23,6 +23,7 @@ from torch import Tensor, device, nn
 from torch.nn import CrossEntropyLoss
 
 from ...activations import ACT2FN
+from ...generation import GenerationMixin
 from ...modeling_outputs import (
     BaseModelOutputWithPastAndCrossAttentions,
     BaseModelOutputWithPoolingAndCrossAttentions,
@@ -523,6 +524,9 @@ class BlipTextLMPredictionHead(nn.Module):
         # Need a link between the two variables so that the bias is correctly resized with `resize_token_embeddings`
         self.decoder.bias = self.bias
 
+    def _tie_weights(self):
+        self.decoder.bias = self.bias
+
     def forward(self, hidden_states):
         hidden_states = self.transform(hidden_states)
         hidden_states = self.decoder(hidden_states)
@@ -549,6 +553,7 @@ class BlipTextPreTrainedModel(PreTrainedModel):
 
     config_class = BlipTextConfig
     base_model_prefix = "bert"
+    _no_split_modules = []
 
     def _init_weights(self, module):
         """Initialize the weights"""
@@ -804,7 +809,7 @@ class BlipTextModel(BlipTextPreTrainedModel):
 
 
 # Adapted from https://github.com/salesforce/BLIP/blob/main/models/med.py#L811
-class BlipTextLMHeadModel(BlipTextPreTrainedModel):
+class BlipTextLMHeadModel(BlipTextPreTrainedModel, GenerationMixin):
     def __init__(self, config):
         super().__init__(config)
 
@@ -817,6 +822,7 @@ class BlipTextLMHeadModel(BlipTextPreTrainedModel):
 
     def set_output_embeddings(self, new_embeddings):
         self.cls.predictions.decoder = new_embeddings
+        self.cls.predictions.bias = new_embeddings.bias
 
     def forward(
         self,

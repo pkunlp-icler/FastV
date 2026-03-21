@@ -25,8 +25,6 @@ import pytest
 
 import transformers
 from transformers import (
-    BERT_PRETRAINED_CONFIG_ARCHIVE_MAP,
-    GPT2_PRETRAINED_CONFIG_ARCHIVE_MAP,
     AutoTokenizer,
     BertConfig,
     BertTokenizer,
@@ -72,13 +70,13 @@ class AutoTokenizerTest(unittest.TestCase):
 
     @slow
     def test_tokenizer_from_pretrained(self):
-        for model_name in (x for x in BERT_PRETRAINED_CONFIG_ARCHIVE_MAP.keys() if "japanese" not in x):
+        for model_name in {"google-bert/bert-base-uncased", "google-bert/bert-base-cased"}:
             tokenizer = AutoTokenizer.from_pretrained(model_name)
             self.assertIsNotNone(tokenizer)
             self.assertIsInstance(tokenizer, (BertTokenizer, BertTokenizerFast))
             self.assertGreater(len(tokenizer), 0)
 
-        for model_name in GPT2_PRETRAINED_CONFIG_ARCHIVE_MAP.keys():
+        for model_name in ["openai-community/gpt2", "openai-community/gpt2-medium"]:
             tokenizer = AutoTokenizer.from_pretrained(model_name)
             self.assertIsNotNone(tokenizer)
             self.assertIsInstance(tokenizer, (GPT2Tokenizer, GPT2TokenizerFast))
@@ -316,6 +314,13 @@ class AutoTokenizerTest(unittest.TestCase):
 
         tokenizer = AutoTokenizer.from_pretrained("hf-internal-testing/test_dynamic_tokenizer", trust_remote_code=True)
         self.assertTrue(tokenizer.special_attribute_present)
+
+        # Test the dynamic module is loaded only once.
+        reloaded_tokenizer = AutoTokenizer.from_pretrained(
+            "hf-internal-testing/test_dynamic_tokenizer", trust_remote_code=True
+        )
+        self.assertIs(tokenizer.__class__, reloaded_tokenizer.__class__)
+
         # Test tokenizer can be reloaded.
         with tempfile.TemporaryDirectory() as tmp_dir:
             tokenizer.save_pretrained(tmp_dir)
@@ -341,6 +346,18 @@ class AutoTokenizerTest(unittest.TestCase):
         else:
             self.assertEqual(tokenizer.__class__.__name__, "NewTokenizer")
             self.assertEqual(reloaded_tokenizer.__class__.__name__, "NewTokenizer")
+
+        # The tokenizer file is cached in the snapshot directory. So the module file is not changed after dumping
+        # to a temp dir. Because the revision of the module file is not changed.
+        # Test the dynamic module is loaded only once if the module file is not changed.
+        self.assertIs(tokenizer.__class__, reloaded_tokenizer.__class__)
+
+        # Test the dynamic module is reloaded if we force it.
+        reloaded_tokenizer = AutoTokenizer.from_pretrained(
+            "hf-internal-testing/test_dynamic_tokenizer", trust_remote_code=True, force_download=True
+        )
+        self.assertIsNot(tokenizer.__class__, reloaded_tokenizer.__class__)
+        self.assertTrue(reloaded_tokenizer.special_attribute_present)
 
     @require_tokenizers
     def test_from_pretrained_dynamic_tokenizer_conflict(self):

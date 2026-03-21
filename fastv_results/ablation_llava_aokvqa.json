@@ -1,0 +1,79 @@
+{
+  "model": "llava-hf/llava-1.5-7b-hf",
+  "model_type": "llava",
+  "benchmark": "aokvqa",
+  "n_total": 644,
+  "n_img": 576,
+  "configs": [
+    {
+      "label": "Baseline",
+      "K": 0,
+      "R_prune": 0.0,
+      "random_pruning": false,
+      "accuracy": 73.6,
+      "flops_ratio": 1.0,
+      "flops_reduction": 0.0,
+      "num_samples": 500
+    },
+    {
+      "label": "K=2,R=50% (attn)",
+      "K": 2,
+      "R_prune": 0.5,
+      "random_pruning": false,
+      "accuracy": 73.8,
+      "flops_ratio": 0.5732,
+      "flops_reduction": 0.4268,
+      "num_samples": 500
+    },
+    {
+      "label": "K=2,R=50% (random)",
+      "K": 2,
+      "R_prune": 0.5,
+      "random_pruning": true,
+      "accuracy": 74.4,
+      "flops_ratio": 0.5732,
+      "flops_reduction": 0.4268,
+      "num_samples": 500
+    },
+    {
+      "label": "K=2,R=75% (attn)",
+      "K": 2,
+      "R_prune": 0.75,
+      "random_pruning": false,
+      "accuracy": 73.2,
+      "flops_ratio": 0.3644,
+      "flops_reduction": 0.6356,
+      "num_samples": 500
+    },
+    {
+      "label": "K=2,R=75% (random)",
+      "K": 2,
+      "R_prune": 0.75,
+      "random_pruning": true,
+      "accuracy": 72.2,
+      "flops_ratio": 0.3644,
+      "flops_reduction": 0.6356,
+      "num_samples": 500
+    },
+    {
+      "label": "K=2,R=90% (attn)",
+      "K": 2,
+      "R_prune": 0.9,
+      "random_pruning": false,
+      "accuracy": 69.8,
+      "flops_ratio": 0.2397,
+      "flops_reduction": 0.7603,
+      "num_samples": 500
+    },
+    {
+      "label": "K=2,R=90% (random)",
+      "K": 2,
+      "R_prune": 0.9,
+      "random_pruning": true,
+      "accuracy": 70.0,
+      "flops_ratio": 0.2397,
+      "flops_reduction": 0.7603,
+      "num_samples": 500
+    }
+  ]
+}

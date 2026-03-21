@@ -91,7 +91,7 @@ def require_retrieval(test_case):
 
     """
     if not (is_torch_available() and is_datasets_available() and is_faiss_available()):
-        test_case = unittest.skip("test requires PyTorch, datasets and faiss")(test_case)
+        test_case = unittest.skip(reason="test requires PyTorch, datasets and faiss")(test_case)
     return test_case
 
 
@@ -653,7 +653,7 @@ class RagDPRT5Test(RagTestMixin, unittest.TestCase):
     def config_and_inputs(self):
         question_encoder_tester = DPRModelTester(self)
         dpr_config_and_inputs = question_encoder_tester.prepare_config_and_inputs()
-        generator_tester = T5ModelTester(self, vocab_size=1100)
+        generator_tester = T5ModelTester(self, vocab_size=1101)
         t5_config_and_inputs = generator_tester.prepare_config_and_inputs()
 
         (question_encoder_config, input_ids, _, input_mask, _, _, _) = dpr_config_and_inputs

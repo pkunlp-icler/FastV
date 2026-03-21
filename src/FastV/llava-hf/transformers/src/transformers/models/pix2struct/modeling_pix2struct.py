@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""" Pix2Struct modeling file"""
+"""Pix2Struct modeling file"""
 
 import math
 from typing import Dict, List, Optional, Tuple, Union
@@ -22,6 +22,7 @@ import torch.utils.checkpoint
 from torch import nn
 
 from ...activations import ACT2FN
+from ...generation import GenerationMixin
 from ...modeling_outputs import (
     BaseModelOutput,
     BaseModelOutputWithPooling,
@@ -47,28 +48,6 @@ logger = logging.get_logger(__name__)
 
 # General docstring
 _CONFIG_FOR_DOC = "Pix2StructConfig"
-
-
-PIX2STRUCT_PRETRAINED_MODEL_ARCHIVE_LIST = [
-    "google/pix2struct-textcaps-base",
-    "google/pix2struct-textcaps-large",
-    "google/pix2struct-base",
-    "google/pix2struct-large",
-    "google/pix2struct-ai2d-base",
-    "google/pix2struct-ai2d-large",
-    "google/pix2struct-widget-captioning-base",
-    "google/pix2struct-widget-captioning-large",
-    "google/pix2struct-screen2words-base",
-    "google/pix2struct-screen2words-large",
-    "google/pix2struct-docvqa-base",
-    "google/pix2struct-docvqa-large",
-    "google/pix2struct-ocrvqa-base",
-    "google/pix2struct-ocrvqa-large",
-    "google/pix2struct-chartqa-base",
-    "google/pix2struct-inforgraphics-vqa-base",
-    "google/pix2struct-inforgraphics-vqa-large",
-    # See all Pix2StructVision models at https://huggingface.co/models?filter=pix2struct
-]
 
 
 # Adapted from transformers.models.t5.modeling_t5.T5LayerNorm with T5->Pix2Struct
@@ -1575,7 +1554,7 @@ class Pix2StructTextModel(Pix2StructPreTrainedModel):
     "A conditional generation model with a language modeling head. Can be used for sequence generation tasks.",
     PIX2STRUCT_START_DOCSTRING,
 )
-class Pix2StructForConditionalGeneration(Pix2StructPreTrainedModel):
+class Pix2StructForConditionalGeneration(Pix2StructPreTrainedModel, GenerationMixin):
     config_class = Pix2StructConfig
     main_input_name = "flattened_patches"
     _tied_weights_keys = ["decoder.lm_head.weight"]

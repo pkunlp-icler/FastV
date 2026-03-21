@@ -141,8 +141,12 @@ class CLIPImageProcessor(BaseImageProcessor):
         ]
 
         # for backwards compatibility of KOSMOS-2
-        if "use_square_size" in kwargs:
+        if "use_square_size" in kwargs and kwargs["use_square_size"]:
             self.size = {"height": size["shortest_edge"], "width": size["shortest_edge"]}
+            # Let's remove `use_square_size` (as it is removed from #27690), so the future Kosmos-2 image processors
+            # won't have this attr. being saved. (otherwise, it will enter this if branch while there is no more
+            # `shortest_edge` key.
+            delattr(self, "use_square_size")
 
     def resize(
         self,
@@ -315,31 +319,26 @@ class CLIPImageProcessor(BaseImageProcessor):
             # We assume that all images have the same channel dimension format.
             input_data_format = infer_channel_dimension_format(images[0])
 
-        if do_resize:
-            images = [
-                self.resize(image=image, size=size, resample=resample, input_data_format=input_data_format)
-                for image in images
-            ]
+        all_images = []
+        for image in images:
+            if do_resize:
+                image = self.resize(image=image, size=size, resample=resample, input_data_format=input_data_format)
 
-        if do_center_crop:
-            images = [
-                self.center_crop(image=image, size=crop_size, input_data_format=input_data_format) for image in images
-            ]
+            if do_center_crop:
+                image = self.center_crop(image=image, size=crop_size, input_data_format=input_data_format)
 
-        if do_rescale:
-            images = [
-                self.rescale(image=image, scale=rescale_factor, input_data_format=input_data_format)
-                for image in images
-            ]
+            if do_rescale:
+                image = self.rescale(image=image, scale=rescale_factor, input_data_format=input_data_format)
 
-        if do_normalize:
-            images = [
-                self.normalize(image=image, mean=image_mean, std=image_std, input_data_format=input_data_format)
-                for image in images
-            ]
+            if do_normalize:
+                image = self.normalize(
+                    image=image, mean=image_mean, std=image_std, input_data_format=input_data_format
+                )
 
+            all_images.append(image)
         images = [
-            to_channel_dimension_format(image, data_format, input_channel_dim=input_data_format) for image in images
+            to_channel_dimension_format(image, data_format, input_channel_dim=input_data_format)
+            for image in all_images
         ]
 
         data = {"pixel_values": images}

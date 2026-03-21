@@ -1,0 +1,79 @@
+{
+  "model": "Qwen/Qwen2-VL-7B-Instruct",
+  "model_type": "qwen2vl",
+  "benchmark": "aokvqa",
+  "n_total": 409,
+  "n_img": 336,
+  "configs": [
+    {
+      "label": "Baseline",
+      "K": 0,
+      "R_prune": 0.0,
+      "random_pruning": false,
+      "accuracy": 85.2,
+      "flops_ratio": 1.0,
+      "flops_reduction": 0.0,
+      "num_samples": 500
+    },
+    {
+      "label": "K=2,R=50% (attn)",
+      "K": 2,
+      "R_prune": 0.5,
+      "random_pruning": false,
+      "accuracy": 85.8,
+      "flops_ratio": 0.6151,
+      "flops_reduction": 0.3849,
+      "num_samples": 500
+    },
+    {
+      "label": "K=2,R=50% (random)",
+      "K": 2,
+      "R_prune": 0.5,
+      "random_pruning": true,
+      "accuracy": 82.0,
+      "flops_ratio": 0.6151,
+      "flops_reduction": 0.3849,
+      "num_samples": 500
+    },
+    {
+      "label": "K=2,R=75% (attn)",
+      "K": 2,
+      "R_prune": 0.75,
+      "random_pruning": false,
+      "accuracy": 83.6,
+      "flops_ratio": 0.4245,
+      "flops_reduction": 0.5755,
+      "num_samples": 500
+    },
+    {
+      "label": "K=2,R=75% (random)",
+      "K": 2,
+      "R_prune": 0.75,
+      "random_pruning": true,
+      "accuracy": 76.2,
+      "flops_ratio": 0.4245,
+      "flops_reduction": 0.5755,
+      "num_samples": 500
+    },
+    {
+      "label": "K=2,R=90% (attn)",
+      "K": 2,
+      "R_prune": 0.9,
+      "random_pruning": false,
+      "accuracy": 74.4,
+      "flops_ratio": 0.3093,
+      "flops_reduction": 0.6907,
+      "num_samples": 500
+    },
+    {
+      "label": "K=2,R=90% (random)",
+      "K": 2,
+      "R_prune": 0.9,
+      "random_pruning": true,
+      "accuracy": 73.0,
+      "flops_ratio": 0.3093,
+      "flops_reduction": 0.6907,
+      "num_samples": 500
+    }
+  ]
+}

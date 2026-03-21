@@ -167,9 +167,6 @@ def shape_list(*args, **kwargs):
     requires_backends(shape_list, ["tf"])
 
 
-TF_ALBERT_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
 class TFAlbertForMaskedLM(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -481,16 +478,6 @@ class TFBartPretrainedModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_BERT_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
-class TFBertEmbeddings(metaclass=DummyObject):
-    _backends = ["tf"]
-
-    def __init__(self, *args, **kwargs):
-        requires_backends(self, ["tf"])
-
-
 class TFBertForMaskedLM(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -610,9 +597,6 @@ class TFBlenderbotSmallPreTrainedModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_BLIP_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
 class TFBlipForConditionalGeneration(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -660,9 +644,6 @@ class TFBlipVisionModel(metaclass=DummyObject):
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, ["tf"])
-
-
-TF_CAMEMBERT_PRETRAINED_MODEL_ARCHIVE_LIST = None
 
 
 class TFCamembertForCausalLM(metaclass=DummyObject):
@@ -721,9 +702,6 @@ class TFCamembertPreTrainedModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_CLIP_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
 class TFCLIPModel(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -750,9 +728,6 @@ class TFCLIPVisionModel(metaclass=DummyObject):
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, ["tf"])
-
-
-TF_CONVBERT_PRETRAINED_MODEL_ARCHIVE_LIST = None
 
 
 class TFConvBertForMaskedLM(metaclass=DummyObject):
@@ -784,13 +759,6 @@ class TFConvBertForSequenceClassification(metaclass=DummyObject):
 
 
 class TFConvBertForTokenClassification(metaclass=DummyObject):
-    _backends = ["tf"]
-
-    def __init__(self, *args, **kwargs):
-        requires_backends(self, ["tf"])
-
-
-class TFConvBertLayer(metaclass=DummyObject):
     _backends = ["tf"]
 
     def __init__(self, *args, **kwargs):
@@ -853,9 +821,6 @@ class TFConvNextV2PreTrainedModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_CTRL_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
 class TFCTRLForSequenceClassification(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -882,9 +847,6 @@ class TFCTRLPreTrainedModel(metaclass=DummyObject):
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, ["tf"])
-
-
-TF_CVT_PRETRAINED_MODEL_ARCHIVE_LIST = None
 
 
 class TFCvtForImageClassification(metaclass=DummyObject):
@@ -936,9 +898,6 @@ class TFData2VecVisionPreTrainedModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_DEBERTA_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
 class TFDebertaForMaskedLM(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -979,9 +938,6 @@ class TFDebertaPreTrainedModel(metaclass=DummyObject):
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, ["tf"])
-
-
-TF_DEBERTA_V2_PRETRAINED_MODEL_ARCHIVE_LIST = None
 
 
 class TFDebertaV2ForMaskedLM(metaclass=DummyObject):
@@ -1033,9 +989,6 @@ class TFDebertaV2PreTrainedModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_DEIT_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
 class TFDeiTForImageClassification(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -1071,7 +1024,32 @@ class TFDeiTPreTrainedModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_TRANSFO_XL_PRETRAINED_MODEL_ARCHIVE_LIST = None
+class TFEfficientFormerForImageClassification(metaclass=DummyObject):
+    _backends = ["tf"]
+
+    def __init__(self, *args, **kwargs):
+        requires_backends(self, ["tf"])
+
+
+class TFEfficientFormerForImageClassificationWithTeacher(metaclass=DummyObject):
+    _backends = ["tf"]
+
+    def __init__(self, *args, **kwargs):
+        requires_backends(self, ["tf"])
+
+
+class TFEfficientFormerModel(metaclass=DummyObject):
+    _backends = ["tf"]
+
+    def __init__(self, *args, **kwargs):
+        requires_backends(self, ["tf"])
+
+
+class TFEfficientFormerPreTrainedModel(metaclass=DummyObject):
+    _backends = ["tf"]
+
+    def __init__(self, *args, **kwargs):
+        requires_backends(self, ["tf"])
 
 
 class TFAdaptiveEmbedding(metaclass=DummyObject):
@@ -1114,9 +1092,6 @@ class TFTransfoXLPreTrainedModel(metaclass=DummyObject):
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, ["tf"])
-
-
-TF_DISTILBERT_PRETRAINED_MODEL_ARCHIVE_LIST = None
 
 
 class TFDistilBertForMaskedLM(metaclass=DummyObject):
@@ -1175,15 +1150,6 @@ class TFDistilBertPreTrainedModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_DPR_CONTEXT_ENCODER_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
-TF_DPR_QUESTION_ENCODER_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
-TF_DPR_READER_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
 class TFDPRContextEncoder(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -1224,40 +1190,6 @@ class TFDPRReader(metaclass=DummyObject):
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, ["tf"])
-
-
-TF_EFFICIENTFORMER_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
-class TFEfficientFormerForImageClassification(metaclass=DummyObject):
-    _backends = ["tf"]
-
-    def __init__(self, *args, **kwargs):
-        requires_backends(self, ["tf"])
-
-
-class TFEfficientFormerForImageClassificationWithTeacher(metaclass=DummyObject):
-    _backends = ["tf"]
-
-    def __init__(self, *args, **kwargs):
-        requires_backends(self, ["tf"])
-
-
-class TFEfficientFormerModel(metaclass=DummyObject):
-    _backends = ["tf"]
-
-    def __init__(self, *args, **kwargs):
-        requires_backends(self, ["tf"])
-
-
-class TFEfficientFormerPreTrainedModel(metaclass=DummyObject):
-    _backends = ["tf"]
-
-    def __init__(self, *args, **kwargs):
-        requires_backends(self, ["tf"])
-
-
-TF_ELECTRA_PRETRAINED_MODEL_ARCHIVE_LIST = None
 
 
 class TFElectraForMaskedLM(metaclass=DummyObject):
@@ -1323,9 +1255,6 @@ class TFEncoderDecoderModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-ESM_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
 class TFEsmForMaskedLM(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -1359,9 +1288,6 @@ class TFEsmPreTrainedModel(metaclass=DummyObject):
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, ["tf"])
-
-
-TF_FLAUBERT_PRETRAINED_MODEL_ARCHIVE_LIST = None
 
 
 class TFFlaubertForMultipleChoice(metaclass=DummyObject):
@@ -1411,9 +1337,6 @@ class TFFlaubertWithLMHeadModel(metaclass=DummyObject):
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, ["tf"])
-
-
-TF_FUNNEL_PRETRAINED_MODEL_ARCHIVE_LIST = None
 
 
 class TFFunnelBaseModel(metaclass=DummyObject):
@@ -1477,9 +1400,6 @@ class TFFunnelPreTrainedModel(metaclass=DummyObject):
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, ["tf"])
-
-
-TF_GPT2_PRETRAINED_MODEL_ARCHIVE_LIST = None
 
 
 class TFGPT2DoubleHeadsModel(metaclass=DummyObject):
@@ -1559,9 +1479,6 @@ class TFGPTJPreTrainedModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_GROUPVIT_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
 class TFGroupViTModel(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -1590,9 +1507,6 @@ class TFGroupViTVisionModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_HUBERT_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
 class TFHubertForCTC(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -1614,7 +1528,25 @@ class TFHubertPreTrainedModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_LAYOUTLM_PRETRAINED_MODEL_ARCHIVE_LIST = None
+class TFIdeficsForVisionText2Text(metaclass=DummyObject):
+    _backends = ["tf"]
+
+    def __init__(self, *args, **kwargs):
+        requires_backends(self, ["tf"])
+
+
+class TFIdeficsModel(metaclass=DummyObject):
+    _backends = ["tf"]
+
+    def __init__(self, *args, **kwargs):
+        requires_backends(self, ["tf"])
+
+
+class TFIdeficsPreTrainedModel(metaclass=DummyObject):
+    _backends = ["tf"]
+
+    def __init__(self, *args, **kwargs):
+        requires_backends(self, ["tf"])
 
 
 class TFLayoutLMForMaskedLM(metaclass=DummyObject):
@@ -1664,9 +1596,6 @@ class TFLayoutLMPreTrainedModel(metaclass=DummyObject):
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, ["tf"])
-
-
-TF_LAYOUTLMV3_PRETRAINED_MODEL_ARCHIVE_LIST = None
 
 
 class TFLayoutLMv3ForQuestionAnswering(metaclass=DummyObject):
@@ -1725,9 +1654,6 @@ class TFLEDPreTrainedModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_LONGFORMER_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
 class TFLongformerForMaskedLM(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -1775,16 +1701,6 @@ class TFLongformerPreTrainedModel(metaclass=DummyObject):
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, ["tf"])
-
-
-class TFLongformerSelfAttention(metaclass=DummyObject):
-    _backends = ["tf"]
-
-    def __init__(self, *args, **kwargs):
-        requires_backends(self, ["tf"])
-
-
-TF_LXMERT_PRETRAINED_MODEL_ARCHIVE_LIST = None
 
 
 class TFLxmertForPreTraining(metaclass=DummyObject):
@@ -1864,7 +1780,32 @@ class TFMBartPreTrainedModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_MOBILEBERT_PRETRAINED_MODEL_ARCHIVE_LIST = None
+class TFMistralForCausalLM(metaclass=DummyObject):
+    _backends = ["tf"]
+
+    def __init__(self, *args, **kwargs):
+        requires_backends(self, ["tf"])
+
+
+class TFMistralForSequenceClassification(metaclass=DummyObject):
+    _backends = ["tf"]
+
+    def __init__(self, *args, **kwargs):
+        requires_backends(self, ["tf"])
+
+
+class TFMistralModel(metaclass=DummyObject):
+    _backends = ["tf"]
+
+    def __init__(self, *args, **kwargs):
+        requires_backends(self, ["tf"])
+
+
+class TFMistralPreTrainedModel(metaclass=DummyObject):
+    _backends = ["tf"]
+
+    def __init__(self, *args, **kwargs):
+        requires_backends(self, ["tf"])
 
 
 class TFMobileBertForMaskedLM(metaclass=DummyObject):
@@ -1937,9 +1878,6 @@ class TFMobileBertPreTrainedModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_MOBILEVIT_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
 class TFMobileViTForImageClassification(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -1966,9 +1904,6 @@ class TFMobileViTPreTrainedModel(metaclass=DummyObject):
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, ["tf"])
-
-
-TF_MPNET_PRETRAINED_MODEL_ARCHIVE_LIST = None
 
 
 class TFMPNetForMaskedLM(metaclass=DummyObject):
@@ -2046,9 +1981,6 @@ class TFMT5Model(metaclass=DummyObject):
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, ["tf"])
-
-
-TF_OPENAI_GPT_PRETRAINED_MODEL_ARCHIVE_LIST = None
 
 
 class TFOpenAIGPTDoubleHeadsModel(metaclass=DummyObject):
@@ -2163,9 +2095,6 @@ class TFRagTokenForGeneration(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_REGNET_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
 class TFRegNetForImageClassification(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -2185,9 +2114,6 @@ class TFRegNetPreTrainedModel(metaclass=DummyObject):
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, ["tf"])
-
-
-TF_REMBERT_PRETRAINED_MODEL_ARCHIVE_LIST = None
 
 
 class TFRemBertForCausalLM(metaclass=DummyObject):
@@ -2232,13 +2158,6 @@ class TFRemBertForTokenClassification(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-class TFRemBertLayer(metaclass=DummyObject):
-    _backends = ["tf"]
-
-    def __init__(self, *args, **kwargs):
-        requires_backends(self, ["tf"])
-
-
 class TFRemBertModel(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -2251,9 +2170,6 @@ class TFRemBertPreTrainedModel(metaclass=DummyObject):
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, ["tf"])
-
-
-TF_RESNET_PRETRAINED_MODEL_ARCHIVE_LIST = None
 
 
 class TFResNetForImageClassification(metaclass=DummyObject):
@@ -2275,9 +2191,6 @@ class TFResNetPreTrainedModel(metaclass=DummyObject):
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, ["tf"])
-
-
-TF_ROBERTA_PRETRAINED_MODEL_ARCHIVE_LIST = None
 
 
 class TFRobertaForCausalLM(metaclass=DummyObject):
@@ -2343,9 +2256,6 @@ class TFRobertaPreTrainedModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_ROBERTA_PRELAYERNORM_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
 class TFRobertaPreLayerNormForCausalLM(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -2409,9 +2319,6 @@ class TFRobertaPreLayerNormPreTrainedModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_ROFORMER_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
 class TFRoFormerForCausalLM(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -2454,13 +2361,6 @@ class TFRoFormerForTokenClassification(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-class TFRoFormerLayer(metaclass=DummyObject):
-    _backends = ["tf"]
-
-    def __init__(self, *args, **kwargs):
-        requires_backends(self, ["tf"])
-
-
 class TFRoFormerModel(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -2475,9 +2375,6 @@ class TFRoFormerPreTrainedModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_SAM_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
 class TFSamModel(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -2490,9 +2387,6 @@ class TFSamPreTrainedModel(metaclass=DummyObject):
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, ["tf"])
-
-
-TF_SEGFORMER_PRETRAINED_MODEL_ARCHIVE_LIST = None
 
 
 class TFSegformerDecodeHead(metaclass=DummyObject):
@@ -2530,9 +2424,6 @@ class TFSegformerPreTrainedModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_SPEECH_TO_TEXT_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
 class TFSpeech2TextForConditionalGeneration(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -2554,7 +2445,25 @@ class TFSpeech2TextPreTrainedModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_SWIN_PRETRAINED_MODEL_ARCHIVE_LIST = None
+class TFSwiftFormerForImageClassification(metaclass=DummyObject):
+    _backends = ["tf"]
+
+    def __init__(self, *args, **kwargs):
+        requires_backends(self, ["tf"])
+
+
+class TFSwiftFormerModel(metaclass=DummyObject):
+    _backends = ["tf"]
+
+    def __init__(self, *args, **kwargs):
+        requires_backends(self, ["tf"])
+
+
+class TFSwiftFormerPreTrainedModel(metaclass=DummyObject):
+    _backends = ["tf"]
+
+    def __init__(self, *args, **kwargs):
+        requires_backends(self, ["tf"])
 
 
 class TFSwinForImageClassification(metaclass=DummyObject):
@@ -2585,9 +2494,6 @@ class TFSwinPreTrainedModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_T5_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
 class TFT5EncoderModel(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -2614,9 +2520,6 @@ class TFT5PreTrainedModel(metaclass=DummyObject):
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, ["tf"])
-
-
-TF_TAPAS_PRETRAINED_MODEL_ARCHIVE_LIST = None
 
 
 class TFTapasForMaskedLM(metaclass=DummyObject):
@@ -2710,9 +2613,6 @@ class TFViTMAEPreTrainedModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_WAV_2_VEC_2_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
 class TFWav2Vec2ForCTC(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -2741,9 +2641,6 @@ class TFWav2Vec2PreTrainedModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_WHISPER_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
 class TFWhisperForConditionalGeneration(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -2765,9 +2662,6 @@ class TFWhisperPreTrainedModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_XGLM_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
 class TFXGLMForCausalLM(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -2787,9 +2681,6 @@ class TFXGLMPreTrainedModel(metaclass=DummyObject):
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, ["tf"])
-
-
-TF_XLM_PRETRAINED_MODEL_ARCHIVE_LIST = None
 
 
 class TFXLMForMultipleChoice(metaclass=DummyObject):
@@ -2848,9 +2739,6 @@ class TFXLMWithLMHeadModel(metaclass=DummyObject):
         requires_backends(self, ["tf"])
 
 
-TF_XLM_ROBERTA_PRETRAINED_MODEL_ARCHIVE_LIST = None
-
-
 class TFXLMRobertaForCausalLM(metaclass=DummyObject):
     _backends = ["tf"]
 
@@ -2905,9 +2793,6 @@ class TFXLMRobertaPreTrainedModel(metaclass=DummyObject):
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, ["tf"])
-
-
-TF_XLNET_PRETRAINED_MODEL_ARCHIVE_LIST = None
 
 
 class TFXLNetForMultipleChoice(metaclass=DummyObject):

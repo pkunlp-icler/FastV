@@ -12,13 +12,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""" Testing suite for the PyTorch MobileViT model. """
-
+"""Testing suite for the PyTorch MobileViT model."""
 
 import unittest
 
 from transformers import MobileViTConfig
-from transformers.testing_utils import require_torch, require_vision, slow, torch_device
+from transformers.testing_utils import is_flaky, require_torch, require_vision, slow, torch_device
 from transformers.utils import cached_property, is_torch_available, is_vision_available
 
 from ...test_configuration_common import ConfigTester
@@ -30,7 +29,6 @@ if is_torch_available():
     import torch
 
     from transformers import MobileViTForImageClassification, MobileViTForSemanticSegmentation, MobileViTModel
-    from transformers.models.mobilevit.modeling_mobilevit import MOBILEVIT_PRETRAINED_MODEL_ARCHIVE_LIST
 
 
 if is_vision_available():
@@ -213,7 +211,7 @@ class MobileViTModelTest(ModelTesterMixin, PipelineTesterMixin, unittest.TestCas
         pass
 
     @unittest.skip(reason="MobileViT does not support input and output embeddings")
-    def test_model_common_attributes(self):
+    def test_model_get_set_embeddings(self):
         pass
 
     @unittest.skip(reason="MobileViT does not output attentions")
@@ -272,9 +270,13 @@ class MobileViTModelTest(ModelTesterMixin, PipelineTesterMixin, unittest.TestCas
 
     @slow
     def test_model_from_pretrained(self):
-        for model_name in MOBILEVIT_PRETRAINED_MODEL_ARCHIVE_LIST[:1]:
-            model = MobileViTModel.from_pretrained(model_name)
-            self.assertIsNotNone(model)
+        model_name = "apple/mobilevit-small"
+        model = MobileViTModel.from_pretrained(model_name)
+        self.assertIsNotNone(model)
+
+    @is_flaky(description="is_flaky https://github.com/huggingface/transformers/issues/29516")
+    def test_batching_equivalence(self):
+        super().test_batching_equivalence()
 
 
 # We will verify our results on an image of cute cats

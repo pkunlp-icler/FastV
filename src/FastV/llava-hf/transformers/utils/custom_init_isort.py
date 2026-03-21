@@ -34,6 +34,7 @@ For a check only (as used in `make quality`) run:
 python utils/custom_init_isort.py --check_only
 ```
 """
+
 import argparse
 import os
 import re
@@ -243,7 +244,7 @@ def sort_imports(file: str, check_only: bool = True):
         code = f.read()
 
     # If the file is not a custom init, there is nothing to do.
-    if "_import_structure" not in code:
+    if "_import_structure" not in code or "define_import_structure" in code:
         return
 
     # Blocks of indent level 0

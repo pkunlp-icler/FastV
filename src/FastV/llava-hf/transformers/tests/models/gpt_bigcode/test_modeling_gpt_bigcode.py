@@ -22,7 +22,7 @@ from transformers.testing_utils import require_torch, slow, torch_device
 
 from ...generation.test_utils import GenerationTesterMixin
 from ...test_configuration_common import ConfigTester
-from ...test_modeling_common import ModelTesterMixin, floats_tensor, ids_tensor, random_attention_mask
+from ...test_modeling_common import ModelTesterMixin, ids_tensor, random_attention_mask
 from ...test_pipeline_mixin import PipelineTesterMixin
 
 
@@ -177,35 +177,6 @@ class GPTBigCodeModelTester:
         config = self.get_config()
         config.vocab_size = 300
         return config
-
-    def prepare_config_and_inputs_for_decoder(self):
-        (
-            config,
-            input_ids,
-            input_mask,
-            head_mask,
-            token_type_ids,
-            mc_token_ids,
-            sequence_labels,
-            token_labels,
-            choice_labels,
-        ) = self.prepare_config_and_inputs()
-
-        encoder_hidden_states = floats_tensor([self.batch_size, self.seq_length, self.hidden_size])
-        encoder_attention_mask = ids_tensor([self.batch_size, self.seq_length], vocab_size=2)
-
-        return (
-            config,
-            input_ids,
-            input_mask,
-            head_mask,
-            token_type_ids,
-            sequence_labels,
-            token_labels,
-            choice_labels,
-            encoder_hidden_states,
-            encoder_attention_mask,
-        )
 
     def create_and_check_gpt_bigcode_model(self, config, input_ids, input_mask, head_mask, token_type_ids, *args):
         model = GPTBigCodeModel(config=config)
@@ -458,27 +429,27 @@ class GPTBigCodeModelTest(ModelTesterMixin, GenerationTesterMixin, PipelineTeste
     def test_config(self):
         self.config_tester.run_common_tests()
 
-    @unittest.skip("MQA models does not support retain_grad")
+    @unittest.skip(reason="MQA models does not support retain_grad")
     def test_retain_grad_hidden_states_attentions(self):
         pass
 
-    @unittest.skip("Contrastive search not supported due to non-standard caching mechanism")
+    @unittest.skip(reason="Contrastive search not supported due to non-standard caching mechanism")
     def test_contrastive_generate(self):
         pass
 
-    @unittest.skip("Contrastive search not supported due to non-standard caching mechanism")
+    @unittest.skip(reason="Contrastive search not supported due to non-standard caching mechanism")
     def test_contrastive_generate_dict_outputs_use_cache(self):
         pass
 
-    @unittest.skip("CPU offload seems to be broken for some reason - tiny models keep hitting corner cases")
+    @unittest.skip(reason="CPU offload seems to be broken for some reason - tiny models keep hitting corner cases")
     def test_cpu_offload(self):
         pass
 
-    @unittest.skip("Disk offload seems to be broken for some reason - tiny models keep hitting corner cases")
+    @unittest.skip(reason="Disk offload seems to be broken for some reason - tiny models keep hitting corner cases")
     def test_disk_offload(self):
         pass
 
-    @unittest.skip("BigCodeGPT has a non-standard KV cache format.")
+    @unittest.skip(reason="BigCodeGPT has a non-standard KV cache format.")
     def test_past_key_values_format(self):
         pass
 

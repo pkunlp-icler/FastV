@@ -31,6 +31,7 @@ from transformers.testing_utils import (
     get_torch_dist_unique_port,
     require_apex,
     require_bitsandbytes,
+    require_non_xpu,
     require_torch,
     require_torch_gpu,
     require_torch_multi_accelerator,
@@ -80,7 +81,7 @@ class TestTrainerExt(TestCasePlus):
         logs = TrainerState.load_from_json(os.path.join(output_dir, "trainer_state.json")).log_history
 
         if not do_eval:
-            return
+            self.skipTest(reason="do_eval is False")
 
         eval_metrics = [log for log in logs if "eval_loss" in log.keys()]
 
@@ -106,6 +107,7 @@ class TestTrainerExt(TestCasePlus):
     def test_run_seq2seq_ddp(self):
         self.run_seq2seq_quick(distributed=True)
 
+    @require_non_xpu
     @require_apex
     @require_torch_gpu
     def test_run_seq2seq_apex(self):
@@ -301,6 +303,7 @@ class TestTrainerExt(TestCasePlus):
             --label_smoothing_factor 0.1
             --target_lang ro_RO
             --source_lang en_XX
+            --report_to none
         """.split()
 
         args_eval = f"""
@@ -308,7 +311,7 @@ class TestTrainerExt(TestCasePlus):
             --per_device_eval_batch_size 4
             --max_eval_samples 8
             --val_max_target_length {max_len}
-            --evaluation_strategy steps
+            --eval_strategy steps
             --eval_steps {str(eval_steps)}
         """.split()
 

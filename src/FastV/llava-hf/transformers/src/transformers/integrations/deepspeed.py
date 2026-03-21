@@ -14,6 +14,7 @@
 """
 Integration with Deepspeed
 """
+
 import copy
 import importlib.metadata as importlib_metadata
 import importlib.util
@@ -21,7 +22,7 @@ import weakref
 from functools import partialmethod
 
 from ..dependency_versions_check import dep_version_check
-from ..utils import is_accelerate_available, is_torch_available, logging
+from ..utils import is_accelerate_available, is_torch_available, is_torch_mlu_available, logging
 
 
 if is_torch_available():
@@ -38,6 +39,9 @@ def is_deepspeed_available():
     # AND checking it has an author field in the metadata that is HuggingFace.
     if package_exists:
         try:
+            if is_torch_mlu_available():
+                _ = importlib_metadata.metadata("deepspeed-mlu")
+                return True
             _ = importlib_metadata.metadata("deepspeed")
             return True
         except importlib_metadata.PackageNotFoundError:
@@ -237,7 +241,7 @@ class HfTrainerDeepSpeedConfig(HfDeepSpeedConfig):
                 # automatically assign the optimal config values based on model config
                 self.fill_only(
                     "zero_optimization.stage3_prefetch_bucket_size",
-                    0.9 * hidden_size * hidden_size,
+                    int(0.9 * hidden_size * hidden_size),
                 )
                 self.fill_only(
                     "zero_optimization.stage3_param_persistence_threshold",

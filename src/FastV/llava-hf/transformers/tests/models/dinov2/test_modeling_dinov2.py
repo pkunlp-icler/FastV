@@ -12,8 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""" Testing suite for the PyTorch Dinov2 model. """
-
+"""Testing suite for the PyTorch Dinov2 model."""
 
 import unittest
 
@@ -38,7 +37,6 @@ if is_torch_available():
     from torch import nn
 
     from transformers import Dinov2Backbone, Dinov2ForImageClassification, Dinov2Model
-    from transformers.models.dinov2.modeling_dinov2 import DINOV2_PRETRAINED_MODEL_ARCHIVE_LIST
 
 
 if is_vision_available():
@@ -67,6 +65,8 @@ class Dinov2ModelTester:
         type_sequence_label_size=10,
         initializer_range=0.02,
         scope=None,
+        attn_implementation="eager",
+        mask_ratio=0.5,
     ):
         self.parent = parent
         self.batch_size = batch_size
@@ -85,10 +85,14 @@ class Dinov2ModelTester:
         self.type_sequence_label_size = type_sequence_label_size
         self.initializer_range = initializer_range
         self.scope = scope
+        self.attn_implementation = attn_implementation
+        self.mask_ratio = mask_ratio
 
         # in Dinov2, the seq length equals the number of patches + 1 (we add 1 for the [CLS] token)
         num_patches = (image_size // patch_size) ** 2
         self.seq_length = num_patches + 1
+        self.num_masks = int(self.mask_ratio * self.seq_length)
+        self.mask_length = num_patches
 
     def prepare_config_and_inputs(self):
         pixel_values = floats_tensor([self.batch_size, self.num_channels, self.image_size, self.image_size])
@@ -115,6 +119,7 @@ class Dinov2ModelTester:
             attention_probs_dropout_prob=self.attention_probs_dropout_prob,
             is_decoder=False,
             initializer_range=self.initializer_range,
+            attn_implementation=self.attn_implementation,
         )
 
     def create_and_check_model(self, config, pixel_values, labels):
@@ -260,7 +265,7 @@ class Dinov2ModelTest(ModelTesterMixin, PipelineTesterMixin, unittest.TestCase):
     def test_training_gradient_checkpointing_use_reentrant_false(self):
         pass
 
-    def test_model_common_attributes(self):
+    def test_model_get_set_embeddings(self):
         config, _ = self.model_tester.prepare_config_and_inputs_for_common()
 
         for model_class in self.all_model_classes:
@@ -287,9 +292,9 @@ class Dinov2ModelTest(ModelTesterMixin, PipelineTesterMixin, unittest.TestCase):
 
     @slow
     def test_model_from_pretrained(self):
-        for model_name in DINOV2_PRETRAINED_MODEL_ARCHIVE_LIST[:1]:
-            model = Dinov2Model.from_pretrained(model_name)
-            self.assertIsNotNone(model)
+        model_name = "facebook/dinov2-base"
+        model = Dinov2Model.from_pretrained(model_name)
+        self.assertIsNotNone(model)
 
 
 # We will verify our results on an image of cute cats

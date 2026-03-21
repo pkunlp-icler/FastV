@@ -1,0 +1,36 @@
+{
+  "model": "Qwen/Qwen2-VL-7B-Instruct",
+  "model_type": "qwen2vl",
+  "configs": [
+    {
+      "label": "Baseline",
+      "K": 0,
+      "R_prune": 0.0,
+      "accuracy": 84.0,
+      "total_time_s": 37.79,
+      "avg_latency_s": 0.189,
+      "peak_memory_mb": 16617.7,
+      "num_samples": 200
+    },
+    {
+      "label": "FastV K=2,R=50%",
+      "K": 2,
+      "R_prune": 0.5,
+      "accuracy": 84.0,
+      "total_time_s": 37.46,
+      "avg_latency_s": 0.1873,
+      "peak_memory_mb": 16478.0,
+      "num_samples": 200
+    },
+    {
+      "label": "FastV K=2,R=75%",
+      "K": 2,
+      "R_prune": 0.75,
+      "accuracy": 82.0,
+      "total_time_s": 37.28,
+      "avg_latency_s": 0.1864,
+      "peak_memory_mb": 16477.6,
+      "num_samples": 200
+    }
+  ]
+}

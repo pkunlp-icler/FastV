@@ -21,9 +21,10 @@ from datasets import Audio, load_dataset
 
 from transformers import UnivNetConfig, UnivNetFeatureExtractor
 from transformers.testing_utils import (
+    backend_empty_cache,
     is_torch_available,
     require_torch,
-    require_torch_gpu,
+    require_torch_accelerator,
     slow,
     torch_device,
 )
@@ -121,20 +122,16 @@ class UnivNetModelTest(ModelTesterMixin, unittest.TestCase):
 
     def setUp(self):
         self.model_tester = UnivNetModelTester(self)
-        self.config_tester = ConfigTester(self, config_class=UnivNetConfig)
+        self.config_tester = ConfigTester(
+            self, config_class=UnivNetConfig, has_text_modality=False, common_properties=["num_mel_bins"]
+        )
 
     @unittest.skip(reason="fix this once it gets more usage")
     def test_multi_gpu_data_parallel_forward(self):
         super().test_multi_gpu_data_parallel_forward()
 
     def test_config(self):
-        self.config_tester.create_and_test_config_to_json_string()
-        self.config_tester.create_and_test_config_to_json_file()
-        self.config_tester.create_and_test_config_from_and_save_pretrained()
-        self.config_tester.create_and_test_config_from_and_save_pretrained_subfolder()
-        self.config_tester.create_and_test_config_with_num_labels()
-        self.config_tester.check_config_can_be_init_without_params()
-        self.config_tester.check_config_arguments_init()
+        self.config_tester.run_common_tests()
 
     def test_model(self):
         config_and_inputs = self.model_tester.prepare_config_and_inputs()
@@ -163,7 +160,7 @@ class UnivNetModelTest(ModelTesterMixin, unittest.TestCase):
         pass
 
     @unittest.skip(reason="UnivNetModel does not use input embeddings and thus has no get_input_embeddings method.")
-    def test_model_common_attributes(self):
+    def test_model_get_set_embeddings(self):
         pass
 
     @unittest.skip(reason="UnivNetModel does not support all arguments tested, such as output_hidden_states.")
@@ -211,13 +208,13 @@ class UnivNetModelTest(ModelTesterMixin, unittest.TestCase):
             self.assertTrue(outputs.shape[0] == 1, msg="Unbatched input should create batched output with bsz = 1")
 
 
-@require_torch_gpu
+@require_torch_accelerator
 @slow
 class UnivNetModelIntegrationTests(unittest.TestCase):
     def tearDown(self):
         super().tearDown()
         gc.collect()
-        torch.cuda.empty_cache()
+        backend_empty_cache(torch_device)
 
     def _load_datasamples(self, num_samples, sampling_rate=24000):
         ds = load_dataset("hf-internal-testing/librispeech_asr_dummy", "clean", split="validation")

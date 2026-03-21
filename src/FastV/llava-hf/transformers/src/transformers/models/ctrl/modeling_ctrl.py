@@ -13,7 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""" PyTorch CTRL model."""
+"""PyTorch CTRL model."""
 
 from typing import Optional, Tuple, Union
 
@@ -22,6 +22,7 @@ import torch
 from torch import nn
 from torch.nn import BCEWithLogitsLoss, CrossEntropyLoss, MSELoss
 
+from ...generation import GenerationMixin
 from ...modeling_outputs import BaseModelOutputWithPast, CausalLMOutputWithPast, SequenceClassifierOutput
 from ...modeling_utils import PreTrainedModel
 from ...pytorch_utils import Conv1D, find_pruneable_heads_and_indices, prune_linear_layer
@@ -32,11 +33,6 @@ from .configuration_ctrl import CTRLConfig
 logger = logging.get_logger(__name__)
 
 _CONFIG_FOR_DOC = "CTRLConfig"
-
-CTRL_PRETRAINED_MODEL_ARCHIVE_LIST = [
-    "Salesforce/ctrl"
-    # See all CTRL models at https://huggingface.co/models?filter=ctrl
-]
 
 
 def angle_defn(pos, i, d_model_size):
@@ -508,7 +504,7 @@ class CTRLModel(CTRLPreTrainedModel):
     """,
     CTRL_START_DOCSTRING,
 )
-class CTRLLMHeadModel(CTRLPreTrainedModel):
+class CTRLLMHeadModel(CTRLPreTrainedModel, GenerationMixin):
     _tied_weights_keys = ["lm_head.weight"]
 
     def __init__(self, config):
@@ -726,7 +722,7 @@ class CTRLForSequenceClassification(CTRLPreTrainedModel):
         >>> labels = torch.tensor(1)
         >>> loss = model(**inputs, labels=labels).loss
         >>> round(loss.item(), 2)
-        0.35
+        0.93
         ```
 
         Example of multi-label classification:
@@ -802,7 +798,7 @@ class CTRLForSequenceClassification(CTRLPreTrainedModel):
                 sequence_lengths = sequence_lengths.to(logits.device)
             else:
                 sequence_lengths = -1
-                logger.warning(
+                logger.warning_once(
                     f"{self.__class__.__name__} will not detect padding tokens in `inputs_embeds`. Results may be "
                     "unexpected if using padding tokens in conjunction with `inputs_embeds.`"
                 )

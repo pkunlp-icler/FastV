@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""" Testing suite for the PyTorch Fuyu model. """
+"""Testing suite for the PyTorch Fuyu model."""
 
 import io
 import unittest
@@ -295,17 +295,17 @@ class FuyuModelTest(ModelTesterMixin, PipelineTesterMixin, unittest.TestCase):
         pass
 
     # TODO: Fix me (once this model gets more usage)
-    @unittest.skip("Does not work on the tiny model.")
+    @unittest.skip(reason="Does not work on the tiny model.")
     def test_disk_offload_bin(self):
         super().test_disk_offload()
 
     # TODO: Fix me (once this model gets more usage)
-    @unittest.skip("Does not work on the tiny model.")
+    @unittest.skip(reason="Does not work on the tiny model.")
     def test_disk_offload_safetensors(self):
         super().test_disk_offload()
 
     # TODO: Fix me (once this model gets more usage)
-    @unittest.skip("Does not work on the tiny model.")
+    @unittest.skip(reason="Does not work on the tiny model.")
     def test_model_parallelism(self):
         super().test_model_parallelism()
 
@@ -330,7 +330,7 @@ class FuyuModelIntegrationTest(unittest.TestCase):
 
         text_prompt_coco_captioning = "Generate a coco-style caption.\n"
 
-        inputs = processor(text=text_prompt_coco_captioning, images=image, return_tensors="pt")
+        inputs = processor(images=image, text=text_prompt_coco_captioning, return_tensors="pt")
         generated_ids = model.generate(**inputs, max_new_tokens=10)
 
         # take the last 8 tokens (in order to skip special \n\x04 characters) and decode them

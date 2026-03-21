@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import importlib
+from functools import cached_property
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from packaging import version
@@ -23,7 +24,14 @@ from .quantizers_utils import get_module_from_name
 if TYPE_CHECKING:
     from ..modeling_utils import PreTrainedModel
 
-from ..utils import is_accelerate_available, is_bitsandbytes_available, is_torch_available, logging
+from ..utils import (
+    ACCELERATE_MIN_VERSION,
+    is_accelerate_available,
+    is_bitsandbytes_available,
+    is_torch_available,
+    is_torch_xpu_available,
+    logging,
+)
 
 
 if is_torch_available():
@@ -58,20 +66,26 @@ class Bnb4BitHfQuantizer(HfQuantizer):
             self.modules_to_not_convert = self.quantization_config.llm_int8_skip_modules
 
     def validate_environment(self, *args, **kwargs):
-        if not (is_accelerate_available() and is_bitsandbytes_available()):
+        if not is_accelerate_available():
             raise ImportError(
-                "Using `bitsandbytes` 8-bit quantization requires Accelerate: `pip install accelerate` "
-                "and the latest version of bitsandbytes: `pip install -i https://pypi.org/simple/ bitsandbytes`"
+                f"Using `bitsandbytes` 4-bit quantization requires Accelerate: `pip install 'accelerate>={ACCELERATE_MIN_VERSION}'`"
             )
+        if not is_bitsandbytes_available():
+            raise ImportError(
+                "Using `bitsandbytes` 4-bit quantization requires the latest version of bitsandbytes: `pip install -U bitsandbytes`"
+            )
+
+        from ..integrations import validate_bnb_backend_availability
+        from ..utils import is_bitsandbytes_multi_backend_available
+
+        bnb_multibackend_is_enabled = is_bitsandbytes_multi_backend_available()
+        validate_bnb_backend_availability(raise_exception=True)
 
         if kwargs.get("from_tf", False) or kwargs.get("from_flax", False):
             raise ValueError(
                 "Converting into 4-bit or 8-bit weights from tf/flax weights is currently not supported, please make"
                 " sure the weights are in PyTorch format."
             )
-
-        if not torch.cuda.is_available():
-            raise RuntimeError("No GPU found. A GPU is needed for quantization.")
 
         device_map = kwargs.get("device_map", None)
         if (
@@ -82,16 +96,16 @@ class Bnb4BitHfQuantizer(HfQuantizer):
             device_map_without_lm_head = {
                 key: device_map[key] for key in device_map.keys() if key not in self.modules_to_not_convert
             }
-            if "cpu" in device_map_without_lm_head.values() or "disk" in device_map_without_lm_head.values():
+            if set(device_map.values()) == {"cpu"} and bnb_multibackend_is_enabled:
+                pass
+            elif "cpu" in device_map_without_lm_head.values() or "disk" in device_map_without_lm_head.values():
                 raise ValueError(
-                    """
-                    Some modules are dispatched on the CPU or the disk. Make sure you have enough GPU RAM to fit the
-                    quantized model. If you want to dispatch the model on the CPU or the disk while keeping these modules
-                    in 32-bit, you need to set `load_in_8bit_fp32_cpu_offload=True` and pass a custom `device_map` to
-                    `from_pretrained`. Check
-                    https://huggingface.co/docs/transformers/main/en/main_classes/quantization#offload-between-cpu-and-gpu
-                    for more details.
-                    """
+                    "Some modules are dispatched on the CPU or the disk. Make sure you have enough GPU RAM to fit the "
+                    "quantized model. If you want to dispatch the model on the CPU or the disk while keeping these modules "
+                    "in 32-bit, you need to set `load_in_8bit_fp32_cpu_offload=True` and pass a custom `device_map` to "
+                    "`from_pretrained`. Check "
+                    "https://huggingface.co/docs/transformers/main/en/main_classes/quantization#offload-between-cpu-and-gpu "
+                    "for more details. "
                 )
 
         if version.parse(importlib.metadata.version("bitsandbytes")) < version.parse("0.39.0"):
@@ -201,11 +215,16 @@ class Bnb4BitHfQuantizer(HfQuantizer):
                     if unexpected_keys is not None and k in unexpected_keys:
                         unexpected_keys.remove(k)
 
+            param_kwargs = {}
+            if self.is_bnb_supports_quant_storage_module:
+                param_kwargs["module"] = module
+
             new_value = bnb.nn.Params4bit.from_prequantized(
                 data=param_value,
                 quantized_stats=quantized_stats,
                 requires_grad=False,
                 device=target_device,
+                **param_kwargs,
             )
         else:
             new_value = param_value.to("cpu")
@@ -243,10 +262,15 @@ class Bnb4BitHfQuantizer(HfQuantizer):
     # Copied from transformers.quantizers.quantizer_bnb_8bit.Bnb8BitHfQuantizer.update_device_map
     def update_device_map(self, device_map):
         if device_map is None:
-            device_map = {"": torch.cuda.current_device()}
+            if torch.cuda.is_available():
+                device_map = {"": torch.cuda.current_device()}
+            elif is_torch_xpu_available():
+                device_map = {"": f"xpu:{torch.xpu.current_device()}"}
+            else:
+                device_map = {"": "cpu"}
             logger.info(
                 "The device_map was not initialized. "
-                "Setting device_map to {'':torch.cuda.current_device()}. "
+                f"Setting device_map to {device_map}. "
                 "If you want to use the model for inference, please set device_map ='auto' "
             )
         return device_map
@@ -312,6 +336,23 @@ class Bnb4BitHfQuantizer(HfQuantizer):
 
         return True
 
+    @cached_property
+    def is_bnb_supports_quant_storage_module(self) -> bool:
+        """
+        determines if the current version of bitsandbytes supports
+        the `module` parameter in `Params4bit.from_prequantized`
+        :return:
+        """
+        return version.parse(importlib.metadata.version("bitsandbytes")) >= version.parse("0.43.3")
+
     @property
     def is_trainable(self) -> bool:
         return True
+
+    def _dequantize(self, model):
+        from ..integrations import dequantize_and_replace
+
+        model = dequantize_and_replace(
+            model, self.modules_to_not_convert, quantization_config=self.quantization_config
+        )
+        return model

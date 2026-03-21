@@ -1,3 +1,5 @@
 # .gitignore
 __pycache__/
 aokvqa_eval_fastv/
+checkpoints/
+data/

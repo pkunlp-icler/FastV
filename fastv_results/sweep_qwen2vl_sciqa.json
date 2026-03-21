@@ -1,0 +1,99 @@
+{
+  "model": "Qwen/Qwen2-VL-7B-Instruct",
+  "model_type": "qwen2vl",
+  "benchmark": "sciqa",
+  "n_total": 302,
+  "n_img": 188,
+  "configs": [
+    {
+      "label": "Baseline",
+      "K": 0,
+      "R_prune": 0.0,
+      "accuracy": 84.2,
+      "flops_ratio": 1.0,
+      "flops_reduction": 0.0,
+      "num_samples": 500
+    },
+    {
+      "label": "K=2,R=50%",
+      "K": 2,
+      "R_prune": 0.5,
+      "accuracy": 81.2,
+      "flops_ratio": 0.7087,
+      "flops_reduction": 0.2913,
+      "num_samples": 500
+    },
+    {
+      "label": "K=2,R=75%",
+      "K": 2,
+      "R_prune": 0.75,
+      "accuracy": 79.2,
+      "flops_ratio": 0.5638,
+      "flops_reduction": 0.4362,
+      "num_samples": 500
+    },
+    {
+      "label": "K=2,R=90%",
+      "K": 2,
+      "R_prune": 0.9,
+      "accuracy": 73.6,
+      "flops_ratio": 0.4747,
+      "flops_reduction": 0.5253,
+      "num_samples": 500
+    },
+    {
+      "label": "K=3,R=50%",
+      "K": 3,
+      "R_prune": 0.5,
+      "accuracy": 81.4,
+      "flops_ratio": 0.7199,
+      "flops_reduction": 0.2801,
+      "num_samples": 500
+    },
+    {
+      "label": "K=3,R=75%",
+      "K": 3,
+      "R_prune": 0.75,
+      "accuracy": 74.8,
+      "flops_ratio": 0.5806,
+      "flops_reduction": 0.4194,
+      "num_samples": 500
+    },
+    {
+      "label": "K=3,R=90%",
+      "K": 3,
+      "R_prune": 0.9,
+      "accuracy": 73.6,
+      "flops_ratio": 0.4949,
+      "flops_reduction": 0.5051,
+      "num_samples": 500
+    },
+    {
+      "label": "K=5,R=50%",
+      "K": 5,
+      "R_prune": 0.5,
+      "accuracy": 82.2,
+      "flops_ratio": 0.7423,
+      "flops_reduction": 0.2577,
+      "num_samples": 500
+    },
+    {
+      "label": "K=5,R=75%",
+      "K": 5,
+      "R_prune": 0.75,
+      "accuracy": 76.4,
+      "flops_ratio": 0.6141,
+      "flops_reduction": 0.3859,
+      "num_samples": 500
+    },
+    {
+      "label": "K=5,R=90%",
+      "K": 5,
+      "R_prune": 0.9,
+      "accuracy": 72.8,
+      "flops_ratio": 0.5353,
+      "flops_reduction": 0.4647,
+      "num_samples": 500
+    }
+  ]
+}

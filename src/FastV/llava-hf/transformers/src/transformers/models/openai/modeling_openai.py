@@ -15,7 +15,6 @@
 # limitations under the License.
 """PyTorch OpenAI GPT model."""
 
-
 import json
 import math
 import os
@@ -27,6 +26,7 @@ from torch import nn
 from torch.nn import BCEWithLogitsLoss, CrossEntropyLoss, MSELoss
 
 from ...activations import gelu_new, silu
+from ...generation import GenerationMixin
 from ...modeling_outputs import BaseModelOutput, CausalLMOutput, SequenceClassifierOutput
 from ...modeling_utils import PreTrainedModel, SequenceSummary
 from ...pytorch_utils import Conv1D, find_pruneable_heads_and_indices, prune_conv1d_layer
@@ -45,11 +45,6 @@ logger = logging.get_logger(__name__)
 
 _CHECKPOINT_FOR_DOC = "openai-community/openai-gpt"
 _CONFIG_FOR_DOC = "OpenAIGPTConfig"
-
-OPENAI_GPT_PRETRAINED_MODEL_ARCHIVE_LIST = [
-    "openai-community/openai-gpt",
-    # See all OpenAI GPT models at https://huggingface.co/models?filter=openai-community/openai-gpt
-]
 
 
 def load_tf_weights_in_openai_gpt(model, config, openai_checkpoint_folder_path):
@@ -530,7 +525,7 @@ class OpenAIGPTModel(OpenAIGPTPreTrainedModel):
     """,
     OPENAI_GPT_START_DOCSTRING,
 )
-class OpenAIGPTLMHeadModel(OpenAIGPTPreTrainedModel):
+class OpenAIGPTLMHeadModel(OpenAIGPTPreTrainedModel, GenerationMixin):
     _tied_weights_keys = ["lm_head.weight"]
 
     def __init__(self, config):
@@ -820,7 +815,7 @@ class OpenAIGPTForSequenceClassification(OpenAIGPTPreTrainedModel):
                 sequence_lengths = sequence_lengths.to(logits.device)
             else:
                 sequence_lengths = -1
-                logger.warning(
+                logger.warning_once(
                     f"{self.__class__.__name__} will not detect padding tokens in `inputs_embeds`. Results may be "
                     "unexpected if using padding tokens in conjunction with `inputs_embeds.`"
                 )

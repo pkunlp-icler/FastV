@@ -33,7 +33,6 @@ if is_torch_available():
     from torch import nn
 
     from transformers import MODEL_FOR_CAUSAL_LM_MAPPING, GitForCausalLM, GitModel, GitVisionModel
-    from transformers.models.git.modeling_git import GIT_PRETRAINED_MODEL_ARCHIVE_LIST
 
 
 if is_vision_available():
@@ -143,7 +142,7 @@ class GitVisionModelTest(ModelTesterMixin, unittest.TestCase):
     def test_inputs_embeds(self):
         pass
 
-    def test_model_common_attributes(self):
+    def test_model_get_set_embeddings(self):
         config, _ = self.model_tester.prepare_config_and_inputs_for_common()
 
         for model_class in self.all_model_classes:
@@ -168,9 +167,11 @@ class GitVisionModelTest(ModelTesterMixin, unittest.TestCase):
         config_and_inputs = self.model_tester.prepare_config_and_inputs()
         self.model_tester.create_and_check_model(*config_and_inputs)
 
+    @unittest.skip
     def test_training(self):
         pass
 
+    @unittest.skip
     def test_training_gradient_checkpointing(self):
         pass
 
@@ -196,9 +197,9 @@ class GitVisionModelTest(ModelTesterMixin, unittest.TestCase):
 
     @slow
     def test_model_from_pretrained(self):
-        for model_name in GIT_PRETRAINED_MODEL_ARCHIVE_LIST[:1]:
-            model = GitVisionModel.from_pretrained(model_name)
-            self.assertIsNotNone(model)
+        model_name = "microsoft/git-base"
+        model = GitVisionModel.from_pretrained(model_name)
+        self.assertIsNotNone(model)
 
 
 class GitModelTester:
@@ -368,6 +369,7 @@ class GitModelTester:
             attention_mask=None,
             pixel_values=pixel_values,
             do_sample=False,
+            min_length=20,
             max_length=20,
             num_beams=2,
             num_return_sequences=2,
@@ -448,11 +450,58 @@ class GitModelTest(ModelTesterMixin, GenerationTesterMixin, PipelineTesterMixin,
             config_and_inputs[0].position_embedding_type = type
             self.model_tester.create_and_check_model(*config_and_inputs)
 
+    def _check_attentions_for_generate(
+        self, batch_size, attentions, min_length, max_length, config, use_cache=False, num_beam_groups=1
+    ):
+        # GIT attention shape depends on image inputs, overwrite
+        self.assertIsInstance(attentions, tuple)
+        self.assertListEqual(
+            [isinstance(iter_attentions, tuple) for iter_attentions in attentions], [True] * len(attentions)
+        )
+        self.assertEqual(len(attentions), (max_length - min_length) * num_beam_groups)
+        image_length = int((config.vision_config.image_size / config.vision_config.patch_size) ** 2 + 1)
+
+        for idx, iter_attentions in enumerate(attentions):
+            tgt_len = min_length + idx + image_length if not use_cache else 1
+            src_len = min_length + idx + image_length
+
+            expected_shape = (
+                batch_size * num_beam_groups,
+                config.num_attention_heads,
+                tgt_len,
+                src_len,
+            )
+            # check attn size
+            self.assertListEqual(
+                [layer_attention.shape for layer_attention in iter_attentions], [expected_shape] * len(iter_attentions)
+            )
+
+    def _check_hidden_states_for_generate(
+        self, batch_size, hidden_states, min_length, max_length, config, use_cache=False, num_beam_groups=1
+    ):
+        # GIT attention shape depends on image inputs, overwrite
+        self.assertIsInstance(hidden_states, tuple)
+        self.assertListEqual(
+            [isinstance(iter_hidden_states, tuple) for iter_hidden_states in hidden_states],
+            [True] * len(hidden_states),
+        )
+        self.assertEqual(len(hidden_states), (max_length - min_length) * num_beam_groups)
+        image_length = int((config.vision_config.image_size / config.vision_config.patch_size) ** 2 + 1)
+
+        for idx, iter_hidden_states in enumerate(hidden_states):
+            seq_len = min_length + idx + image_length if not use_cache else 1
+            expected_shape = (batch_size * num_beam_groups, seq_len, config.hidden_size)
+            # check hidden size
+            self.assertListEqual(
+                [layer_hidden_states.shape for layer_hidden_states in iter_hidden_states],
+                [expected_shape] * len(iter_hidden_states),
+            )
+
     @slow
     def test_model_from_pretrained(self):
-        for model_name in GIT_PRETRAINED_MODEL_ARCHIVE_LIST[:1]:
-            model = GitModel.from_pretrained(model_name)
-            self.assertIsNotNone(model)
+        model_name = "microsoft/git-base"
+        model = GitModel.from_pretrained(model_name)
+        self.assertIsNotNone(model)
 
     @unittest.skip(reason="GIT has pixel values as additional input")
     def test_beam_search_generate_dict_outputs_use_cache(self):
@@ -467,7 +516,15 @@ class GitModelTest(ModelTesterMixin, GenerationTesterMixin, PipelineTesterMixin,
         pass
 
     @unittest.skip(reason="GIT has pixel values as additional input")
+    def test_contrastive_generate_low_memory(self):
+        pass
+
+    @unittest.skip(reason="GIT has pixel values as additional input")
     def test_greedy_generate_dict_outputs_use_cache(self):
+        pass
+
+    @unittest.skip(reason="GIT has pixel values as additional input")
+    def test_dola_decoding_sample(self):
         pass
 
 
@@ -511,7 +568,7 @@ class GitModelIntegrationTest(unittest.TestCase):
 
         expected_shape = torch.Size((1, 9))
         self.assertEqual(outputs.sequences.shape, expected_shape)
-        self.assertEquals(generated_caption, "two cats laying on a pink blanket")
+        self.assertEqual(generated_caption, "two cats laying on a pink blanket")
         self.assertTrue(outputs.scores[-1].shape, expected_shape)
         expected_slice = torch.tensor([[-0.8805, -0.8803, -0.8799]], device=torch_device)
         self.assertTrue(torch.allclose(outputs.scores[-1][0, :3], expected_slice, atol=1e-4))
@@ -538,7 +595,7 @@ class GitModelIntegrationTest(unittest.TestCase):
 
         expected_shape = torch.Size((1, 15))
         self.assertEqual(generated_ids.shape, expected_shape)
-        self.assertEquals(generated_caption, "what does the front of the bus say at the top? special")
+        self.assertEqual(generated_caption, "what does the front of the bus say at the top? special")
 
     def test_batched_generation(self):
         processor = GitProcessor.from_pretrained("microsoft/git-base-coco")
@@ -556,4 +613,4 @@ class GitModelIntegrationTest(unittest.TestCase):
         generated_ids = model.generate(pixel_values=pixel_values, input_ids=input_ids, max_length=50)
         generated_captions = processor.batch_decode(generated_ids, skip_special_tokens=True)
 
-        self.assertEquals(generated_captions, ["two cats sleeping on a pink blanket next to remotes."] * 2)
+        self.assertEqual(generated_captions, ["two cats sleeping on a pink blanket next to remotes."] * 2)

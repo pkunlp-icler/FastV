@@ -12,12 +12,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""" Testing suite for the PyTorch LayoutLMv2 model. """
-
+"""Testing suite for the PyTorch LayoutLMv2 model."""
 
 import unittest
 
-from transformers.testing_utils import require_detectron2, require_torch, require_torch_multi_gpu, slow, torch_device
+from transformers.testing_utils import (
+    require_detectron2,
+    require_non_xpu,
+    require_torch,
+    require_torch_multi_gpu,
+    slow,
+    torch_device,
+)
 from transformers.utils import is_detectron2_available, is_torch_available
 
 from ...test_configuration_common import ConfigTester
@@ -36,7 +42,6 @@ if is_torch_available():
         LayoutLMv2ForTokenClassification,
         LayoutLMv2Model,
     )
-    from transformers.models.layoutlmv2.modeling_layoutlmv2 import LAYOUTLMV2_PRETRAINED_MODEL_ARCHIVE_LIST
 
 if is_detectron2_available():
     from detectron2.structures.image_list import ImageList
@@ -253,6 +258,7 @@ class LayoutLMv2ModelTester:
         return config, inputs_dict
 
 
+@require_non_xpu
 @require_torch
 @require_detectron2
 class LayoutLMv2ModelTest(ModelTesterMixin, PipelineTesterMixin, unittest.TestCase):
@@ -416,15 +422,15 @@ class LayoutLMv2ModelTest(ModelTesterMixin, PipelineTesterMixin, unittest.TestCa
 
             check_hidden_states_output(inputs_dict, config, model_class)
 
-    @unittest.skip("We cannot configure detectron2 to output a smaller backbone")
+    @unittest.skip(reason="We cannot configure detectron2 to output a smaller backbone")
     def test_model_is_small(self):
         pass
 
     @slow
     def test_model_from_pretrained(self):
-        for model_name in LAYOUTLMV2_PRETRAINED_MODEL_ARCHIVE_LIST[:1]:
-            model = LayoutLMv2Model.from_pretrained(model_name)
-            self.assertIsNotNone(model)
+        model_name = "microsoft/layoutlmv2-base-uncased"
+        model = LayoutLMv2Model.from_pretrained(model_name)
+        self.assertIsNotNone(model)
 
     def test_initialization(self):
         config, inputs_dict = self.model_tester.prepare_config_and_inputs_for_common()

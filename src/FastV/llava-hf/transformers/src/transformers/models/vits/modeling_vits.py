@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""" PyTorch VITS model."""
+"""PyTorch VITS model."""
 
 import math
 from dataclasses import dataclass
@@ -40,13 +40,6 @@ logger = logging.get_logger(__name__)
 
 # General docstring
 _CONFIG_FOR_DOC = "VitsConfig"
-
-
-VITS_PRETRAINED_MODEL_ARCHIVE_LIST = [
-    "facebook/mms-tts-eng",
-    # See all VITS models at https://huggingface.co/models?filter=vits
-    # and all MMS models at https://huggingface.co/models?sort=trending&search=facebook%2Fmms-tts
-]
 
 
 @dataclass
@@ -468,10 +461,14 @@ class HifiGanResidualBlock(nn.Module):
         return (kernel_size * dilation - dilation) // 2
 
     def apply_weight_norm(self):
+        weight_norm = nn.utils.weight_norm
+        if hasattr(nn.utils.parametrizations, "weight_norm"):
+            weight_norm = nn.utils.parametrizations.weight_norm
+
         for layer in self.convs1:
-            nn.utils.weight_norm(layer)
+            weight_norm(layer)
         for layer in self.convs2:
-            nn.utils.weight_norm(layer)
+            weight_norm(layer)
 
     def remove_weight_norm(self):
         for layer in self.convs1:
@@ -528,8 +525,12 @@ class VitsHifiGan(nn.Module):
             self.cond = nn.Conv1d(config.speaker_embedding_size, config.upsample_initial_channel, 1)
 
     def apply_weight_norm(self):
+        weight_norm = nn.utils.weight_norm
+        if hasattr(nn.utils.parametrizations, "weight_norm"):
+            weight_norm = nn.utils.parametrizations.weight_norm
+
         for layer in self.upsampler:
-            nn.utils.weight_norm(layer)
+            weight_norm(layer)
         for layer in self.resblocks:
             layer.apply_weight_norm()
 
@@ -1401,6 +1402,9 @@ class VitsModel(VitsPreTrainedModel):
         )
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
 
+        if labels is not None:
+            raise NotImplementedError("Training of VITS is not supported yet.")
+
         if attention_mask is not None:
             input_padding_mask = attention_mask.unsqueeze(-1).float()
         else:
@@ -1414,9 +1418,6 @@ class VitsModel(VitsPreTrainedModel):
             speaker_embeddings = self.embed_speaker(speaker_id).unsqueeze(-1)
         else:
             speaker_embeddings = None
-
-        if labels is not None:
-            raise NotImplementedError("Training of VITS is not supported yet.")
 
         text_encoder_output = self.text_encoder(
             input_ids=input_ids,

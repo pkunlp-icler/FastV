@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""" PyTorch ProphetNet model, ported from ProphetNet repo(fairsequery_states version)."""
+"""PyTorch ProphetNet model, ported from ProphetNet repo(fairsequery_states version)."""
 
 import copy
 import math
@@ -26,6 +26,7 @@ from torch import Tensor, nn
 from torch.nn import LayerNorm
 
 from ...activations import ACT2FN
+from ...generation import GenerationMixin
 from ...modeling_outputs import BaseModelOutput
 from ...modeling_utils import PreTrainedModel
 from ...utils import (
@@ -42,11 +43,6 @@ logger = logging.get_logger(__name__)
 
 _CONFIG_FOR_DOC = "ProphenetConfig"
 _CHECKPOINT_FOR_DOC = "microsoft/prophetnet-large-uncased"
-
-PROPHETNET_PRETRAINED_MODEL_ARCHIVE_LIST = [
-    "microsoft/prophetnet-large-uncased",
-    # See all ProphetNet models at https://huggingface.co/models?filter=prophetnet
-]
 
 
 PROPHETNET_START_DOCSTRING = r"""
@@ -1861,7 +1857,7 @@ class ProphetNetModel(ProphetNetPreTrainedModel):
     "The ProphetNet Model with a language modeling head. Can be used for sequence generation tasks.",
     PROPHETNET_START_DOCSTRING,
 )
-class ProphetNetForConditionalGeneration(ProphetNetPreTrainedModel):
+class ProphetNetForConditionalGeneration(ProphetNetPreTrainedModel, GenerationMixin):
     _tied_weights_keys = ["encoder.word_embeddings.weight", "decoder.word_embeddings.weight", "lm_head.weight"]
 
     def __init__(self, config: ProphetNetConfig):
@@ -2078,7 +2074,7 @@ class ProphetNetForConditionalGeneration(ProphetNetPreTrainedModel):
     " language modeling.",
     PROPHETNET_START_DOCSTRING,
 )
-class ProphetNetForCausalLM(ProphetNetPreTrainedModel):
+class ProphetNetForCausalLM(ProphetNetPreTrainedModel, GenerationMixin):
     _tied_weights_keys = [
         "prophetnet.word_embeddings.weight",
         "prophetnet.decoder.word_embeddings.weight",

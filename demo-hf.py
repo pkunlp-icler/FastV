@@ -26,11 +26,13 @@ model = LlavaForConditionalGeneration.from_pretrained(
     low_cpu_mem_usage=True, 
     attn_implementation="eager",
     fastv_config = fastv_config, # comment this line to use vanilla decoding
+    cache_dir = "./checkpoints"
 ).to(0)
 
 processor = AutoProcessor.from_pretrained(
     model_id, 
-    revision=revision
+    revision=revision,
+    cache_dir = "./checkpoints"
 )
 
 raw_image = Image.open(requests.get(image_file, stream=True).raw)

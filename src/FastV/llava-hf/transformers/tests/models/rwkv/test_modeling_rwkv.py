@@ -22,7 +22,7 @@ from transformers.testing_utils import require_torch, slow, torch_device
 
 from ...generation.test_utils import GenerationTesterMixin
 from ...test_configuration_common import ConfigTester
-from ...test_modeling_common import ModelTesterMixin, floats_tensor, ids_tensor, random_attention_mask
+from ...test_modeling_common import ModelTesterMixin, ids_tensor, random_attention_mask
 from ...test_pipeline_mixin import PipelineTesterMixin
 
 
@@ -30,7 +30,6 @@ if is_torch_available():
     import torch
 
     from transformers import (
-        RWKV_PRETRAINED_MODEL_ARCHIVE_LIST,
         RwkvForCausalLM,
         RwkvModel,
     )
@@ -162,35 +161,6 @@ class RwkvModelTester:
         config.vocab_size = 300
         return config
 
-    def prepare_config_and_inputs_for_decoder(self):
-        (
-            config,
-            input_ids,
-            input_mask,
-            head_mask,
-            token_type_ids,
-            mc_token_ids,
-            sequence_labels,
-            token_labels,
-            choice_labels,
-        ) = self.prepare_config_and_inputs()
-
-        encoder_hidden_states = floats_tensor([self.batch_size, self.seq_length, self.hidden_size])
-        encoder_attention_mask = ids_tensor([self.batch_size, self.seq_length], vocab_size=2)
-
-        return (
-            config,
-            input_ids,
-            input_mask,
-            head_mask,
-            token_type_ids,
-            sequence_labels,
-            token_labels,
-            choice_labels,
-            encoder_hidden_states,
-            encoder_attention_mask,
-        )
-
     def create_and_check_rwkv_model(self, config, input_ids, input_mask, head_mask, token_type_ids, *args):
         config.output_hidden_states = True
         model = RwkvModel(config=config)
@@ -270,7 +240,7 @@ class RwkvModelTest(ModelTesterMixin, GenerationTesterMixin, PipelineTesterMixin
     pipeline_model_mapping = (
         {"feature-extraction": RwkvModel, "text-generation": RwkvForCausalLM} if is_torch_available() else {}
     )
-    # all_generative_model_classes = (RwkvForCausalLM,) if is_torch_available() else ()
+    all_generative_model_classes = (RwkvForCausalLM,) if is_torch_available() else ()
     fx_compatible = False
     test_missing_keys = False
     test_model_parallel = False
@@ -419,9 +389,55 @@ class RwkvModelTest(ModelTesterMixin, GenerationTesterMixin, PipelineTesterMixin
 
     @slow
     def test_model_from_pretrained(self):
-        for model_name in RWKV_PRETRAINED_MODEL_ARCHIVE_LIST[:1]:
-            model = RwkvModel.from_pretrained(model_name)
-            self.assertIsNotNone(model)
+        model_name = "RWKV/rwkv-4-169m-pile"
+        model = RwkvModel.from_pretrained(model_name)
+        self.assertIsNotNone(model)
+
+    def test_beam_sample_generate_dict_output(self):
+        # This model has a custom attention output shape AND config flags, let's skip those checks
+        old_has_attentions = self.has_attentions
+        self.has_attentions = False
+        super().test_beam_sample_generate_dict_output()
+        self.has_attentions = old_has_attentions
+
+    def test_beam_search_generate_dict_output(self):
+        # This model has a custom attention output shape AND config flags, let's skip those checks
+        old_has_attentions = self.has_attentions
+        self.has_attentions = False
+        super().test_beam_search_generate_dict_output()
+        self.has_attentions = old_has_attentions
+
+    def test_constrained_beam_search_generate_dict_output(self):
+        # This model has a custom attention output shape AND config flags, let's skip those checks
+        old_has_attentions = self.has_attentions
+        self.has_attentions = False
+        super().test_constrained_beam_search_generate_dict_output()
+        self.has_attentions = old_has_attentions
+
+    def test_greedy_generate_dict_outputs(self):
+        # This model has a custom attention output shape AND config flags, let's skip those checks
+        old_has_attentions = self.has_attentions
+        self.has_attentions = False
+        super().test_greedy_generate_dict_outputs()
+        self.has_attentions = old_has_attentions
+
+    def test_group_beam_search_generate_dict_output(self):
+        # This model has a custom attention output shape AND config flags, let's skip those checks
+        old_has_attentions = self.has_attentions
+        self.has_attentions = False
+        super().test_group_beam_search_generate_dict_output()
+        self.has_attentions = old_has_attentions
+
+    def test_sample_generate_dict_output(self):
+        # This model has a custom attention output shape AND config flags, let's skip those checks
+        old_has_attentions = self.has_attentions
+        self.has_attentions = False
+        super().test_sample_generate_dict_output()
+        self.has_attentions = old_has_attentions
+
+    @unittest.skip("This model doesn't support padding")
+    def test_left_padding_compatibility(self):
+        pass
 
 
 @unittest.skipIf(

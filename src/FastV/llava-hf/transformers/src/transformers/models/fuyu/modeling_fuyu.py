@@ -12,13 +12,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""" PyTorch Fuyu model."""
+"""PyTorch Fuyu model."""
+
 from typing import List, Optional, Tuple, Union
 
 import torch
 import torch.utils.checkpoint
 from torch import nn
 
+from ...generation import GenerationMixin
 from ...modeling_outputs import CausalLMOutputWithPast
 from ...modeling_utils import PreTrainedModel
 from ...models.auto.modeling_auto import AutoModelForCausalLM
@@ -144,12 +146,14 @@ FUYU_INPUTS_DOCSTRING = r"""
     "Fuyu Model with a language modeling head on top for causal language model conditioned on image patches and text.",
     FUYU_START_DOCSTRING,
 )
-class FuyuForCausalLM(FuyuPreTrainedModel):
+class FuyuForCausalLM(FuyuPreTrainedModel, GenerationMixin):
     def __init__(self, config: FuyuConfig):
         super().__init__(config)
         self.padding_idx = config.pad_token_id
-        self.vocab_size = config.vocab_size
-        self.language_model = AutoModelForCausalLM.from_config(config.text_config)
+        self.vocab_size = config.text_config.vocab_size
+        self.language_model = AutoModelForCausalLM.from_config(
+            config.text_config, attn_implementation=config._attn_implementation
+        )
 
         self.vision_embed_tokens = nn.Linear(
             config.patch_size * config.patch_size * config.num_channels, config.hidden_size
@@ -164,6 +168,21 @@ class FuyuForCausalLM(FuyuPreTrainedModel):
 
     def set_input_embeddings(self, value):
         self.language_model.set_input_embeddings(value)
+
+    def get_output_embeddings(self):
+        return self.language_model.get_output_embeddings()
+
+    def set_output_embeddings(self, new_embeddings):
+        self.language_model.set_output_embeddings(new_embeddings)
+
+    def set_decoder(self, decoder):
+        self.language_model.set_decoder(decoder)
+
+    def get_decoder(self):
+        return self.language_model.get_decoder()
+
+    def tie_weights(self):
+        return self.language_model.tie_weights()
 
     def gather_continuous_embeddings(
         self,
@@ -227,8 +246,8 @@ class FuyuForCausalLM(FuyuPreTrainedModel):
         r"""
         labels (`torch.LongTensor` of shape `(batch_size, sequence_length)`, *optional*):
                 Labels for computing the masked language modeling loss. Indices should either be in `[0, ...,
-                config.vocab_size]` or -100 (see `input_ids` docstring). Tokens with indices set to `-100` are ignored
-                (masked), the loss is only computed for the tokens with labels in `[0, ..., config.vocab_size]`.
+                config.text_config.vocab_size]` or -100 (see `input_ids` docstring). Tokens with indices set to `-100` are ignored
+                (masked), the loss is only computed for the tokens with labels in `[0, ..., config.text_config.vocab_size]`.
 
         Returns:
 
@@ -242,17 +261,17 @@ class FuyuForCausalLM(FuyuPreTrainedModel):
         >>> processor = FuyuProcessor.from_pretrained("adept/fuyu-8b")
         >>> model = FuyuForCausalLM.from_pretrained("adept/fuyu-8b")
 
-        >>> url = "http://images.cocodataset.org/val2017/000000039769.jpg"
+        >>> url = "https://huggingface.co/datasets/hf-internal-testing/fixtures-captioning/resolve/main/bus.png"
         >>> image = Image.open(requests.get(url, stream=True).raw)
         >>> prompt = "Generate a coco-style caption.\n"
 
-        >>> inputs = processor(text=prompt, images=image, return_tensors="pt")
+        >>> inputs = processor(images=image, text=prompt, return_tensors="pt")
         >>> outputs = model(**inputs)
 
-        >>> generated_ids = model.generate(**model_inputs, max_new_tokens=7)
-        >>> generation_text = processor.batch_decode(generated_ids, skip_special_tokens=True)
-        >>> print(generation_text)
-        'A bus parked on the side of a road.'
+        >>> generated_ids = model.generate(**inputs, max_new_tokens=7)
+        >>> generation_text = processor.batch_decode(generated_ids[:, -7:], skip_special_tokens=True)
+        >>> print(generation_text[0])
+        A blue bus parked on the side of a road.
         ```"""
 
         output_attentions = output_attentions if output_attentions is not None else self.config.output_attentions
@@ -290,7 +309,9 @@ class FuyuForCausalLM(FuyuPreTrainedModel):
             inputs_embeds = self.language_model.get_input_embeddings()(input_ids)
             if image_patches is not None and past_key_values is None:
                 patch_embeddings = [
-                    self.vision_embed_tokens(patch.to(self.vision_embed_tokens.weight.dtype)).squeeze(0)
+                    self.vision_embed_tokens(patch.to(self.vision_embed_tokens.weight.dtype))
+                    .squeeze(0)
+                    .to(inputs_embeds.device)
                     for patch in image_patches
                 ]
                 inputs_embeds = self.gather_continuous_embeddings(

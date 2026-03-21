@@ -12,8 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""" RAG model configuration"""
-
+"""RAG model configuration"""
 
 from ...configuration_utils import PretrainedConfig
 from ...utils import add_start_docstrings
@@ -125,9 +124,11 @@ class RagConfig(PretrainedConfig):
             vocab_size=vocab_size,
             **kwargs,
         )
-        assert (
-            "question_encoder" in kwargs and "generator" in kwargs
-        ), "Config has to be initialized with question_encoder and generator config"
+        if "question_encoder" not in kwargs or "generator" not in kwargs:
+            raise ValueError(
+                f"A configuraton of type {self.model_type} cannot be instantiated because "
+                f"both `question_encoder` and `generator` sub-configurations were not passed, only {kwargs}"
+            )
         question_encoder_config = kwargs.pop("question_encoder")
         question_encoder_model_type = question_encoder_config.pop("model_type")
         decoder_config = kwargs.pop("generator")

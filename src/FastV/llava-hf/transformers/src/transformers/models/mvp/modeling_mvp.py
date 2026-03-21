@@ -12,7 +12,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""" PyTorch MVP model."""
+"""PyTorch MVP model."""
+
 import copy
 import math
 from typing import List, Optional, Tuple, Union
@@ -23,6 +24,7 @@ from torch import nn
 from torch.nn import BCEWithLogitsLoss, CrossEntropyLoss, MSELoss
 
 from ...activations import ACT2FN
+from ...generation import GenerationMixin
 from ...modeling_attn_mask_utils import _prepare_4d_attention_mask, _prepare_4d_causal_attention_mask
 from ...modeling_outputs import (
     BaseModelOutput,
@@ -52,25 +54,6 @@ _CONFIG_FOR_DOC = "MvpConfig"
 
 # Base model docstring
 _EXPECTED_OUTPUT_SHAPE = [1, 8, 1024]
-
-MVP_PRETRAINED_MODEL_ARCHIVE_LIST = [
-    "RUCAIBox/mvp",
-    "RUCAIBox/mvp-data-to-text",
-    "RUCAIBox/mvp-open-dialog",
-    "RUCAIBox/mvp-question-answering",
-    "RUCAIBox/mvp-question-generation",
-    "RUCAIBox/mvp-story",
-    "RUCAIBox/mvp-summarization",
-    "RUCAIBox/mvp-task-dialog",
-    "RUCAIBox/mtl-data-to-text",
-    "RUCAIBox/mtl-multi-task",
-    "RUCAIBox/mtl-open-dialog",
-    "RUCAIBox/mtl-question-answering",
-    "RUCAIBox/mtl-question-generation",
-    "RUCAIBox/mtl-story",
-    "RUCAIBox/mtl-summarization",
-    # See all MVP models at https://huggingface.co/models?filter=mvp
-]
 
 
 # Copied from transformers.models.bart.modeling_bart.shift_tokens_right
@@ -1369,7 +1352,7 @@ class MvpModel(MvpPreTrainedModel):
 @add_start_docstrings(
     "The MVP Model with a language modeling head. Can be used for various text generation tasks.", MVP_START_DOCSTRING
 )
-class MvpForConditionalGeneration(MvpPreTrainedModel):
+class MvpForConditionalGeneration(MvpPreTrainedModel, GenerationMixin):
     _tied_weights_keys = ["encoder.embed_tokens.weight", "decoder.embed_tokens.weight", "lm_head.weight"]
 
     def __init__(self, config: MvpConfig):
@@ -1809,7 +1792,7 @@ class MvpDecoderWrapper(MvpPreTrainedModel):
         return self.decoder(*args, **kwargs)
 
 
-class MvpForCausalLM(MvpPreTrainedModel):
+class MvpForCausalLM(MvpPreTrainedModel, GenerationMixin):
     _tied_weights_keys = ["lm_head.weight"]
 
     def __init__(self, config):
